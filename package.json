@@ -19,17 +19,5 @@
   "bugs": {
     "url": "https://github.com/adngdb/llamazord/issues"
   },
-  "homepage": "https://github.com/adngdb/llamazord#readme",
-  "devDependencies": {
-    "babel-core": "^6.3.21",
-    "babel-loader": "^6.2.0",
-    "babel-preset-es2015": "^6.3.13",
-    "css-loader": "^0.23.0",
-    "file-loader": "^0.8.5",
-    "style-loader": "^0.13.0",
-    "webpack": "^1.12.9"
-  },
-  "dependencies": {
-    "phaser": "^2.4.8"
-  }
+  "homepage": "https://github.com/adngdb/llamazord#readme"
 }
