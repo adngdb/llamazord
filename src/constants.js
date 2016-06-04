@@ -4,15 +4,22 @@ define({
     stage: {
         WIDTH: 720,
         HEIGHT: 1280,
+        CELL_SIZE: 90,
+        COIN_START_HEIGHT: 100,//650,
     },
 
     game: {
         GRID_WIDTH: 7,
-        GRID_HEIGHT: 5,
+        GRID_HEIGHT: 5
     },
 
     player: {
-        MAX_HEALTH: 100,
+        MAX_HEALTH: 100
+    },
+
+    coin:{
+        NO_COIN: null
+
     },
 
     inputs: {
