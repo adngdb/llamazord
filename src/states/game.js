@@ -58,7 +58,9 @@ this.coins='coin';//par defaut coin =coin
             this.game.load.image('coin_r', 'assets/jeton-lezard.png');
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
-            this.game.load.audio('ambiance_2', 'assets/sfx/ambience.ogg');
+            this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
+            this.game.load.audio('hit', 'assets/sfx/hit.ogg');
+            this.game.load.audio('sliding', 'assets/sfx/sliding.ogg');
 
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
@@ -71,6 +73,9 @@ this.coins='coin';//par defaut coin =coin
 		onClick : function(){
 			//console.log("prout");
 			this.fire();
+
+
+
 		},
         onClick_b :function(){
             console.log("prout_blue");
@@ -128,6 +133,7 @@ this.coins='coin';//par defaut coin =coin
 
             // start audio
             this.game.sound.play('ambiance');
+
         },
 
         handlePlayerAction: function () {
@@ -228,6 +234,7 @@ this.coins='coin';//par defaut coin =coin
                 );
                 this.actionIsDone = true;
             }
+            this.game.sound.play('sliding');
         },
 
         createGUI: function () {
@@ -404,6 +411,11 @@ this.coins='coin';//par defaut coin =coin
 
             coinTween.to({ y: ydestination }, (ydestination - coinYStart) * 2 );
             coinTween.start();
+            coinTween.onComplete.add(this.endof.bind(this));
+
+         },
+         endof: function() {
+            this.game.sound.play('hit');
         },
 
         invalidColumn: function() {
@@ -413,12 +425,6 @@ this.coins='coin';//par defaut coin =coin
         getColumn: function(xClickPos) {
             return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
         },
-		fire: function(){
-			//console.log("bonjour");
-		var a= this.input.activePointer.x;
-		console.log('X:' + this.input.activePointer.x);
-			this.click(a);
-		},
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT -1;
