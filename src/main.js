@@ -7,11 +7,13 @@ requirejs.config({
 });
 
 require([
+    'states/boot',
+    'states/preloader',
     'states/game',
     'constants',
     'classes/Player',
 ],
-function (Game, constants, Player) {
+function (Boot, Preloader, Game, constants, Player) {
     'use strict';
 
     var game = new Phaser.Game(
@@ -29,11 +31,11 @@ function (Game, constants, Player) {
     }
 
     function create() {
-        // this.game.state.add('Boot', Boot);
-        // this.game.state.add('Preload', Preloader);
+        this.game.state.add('Boot', Boot);
+        this.game.state.add('Preloader', Preloader);
         // this.game.state.add('Title', Title);
         this.game.state.add('Game', Game);
 
-        this.game.state.start('Game');
+        this.game.state.start('Boot');
     }
 });

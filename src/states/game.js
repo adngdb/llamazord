@@ -54,20 +54,6 @@ function (constants, Player, Coin) {
         },
 
         preload: function() {
-            this.game.load.image('background', 'assets/back_green.png');
-            this.game.load.image('grid', 'assets/grid.png');
-            this.game.load.image('arena', 'assets/arena.png');
-            this.game.load.image('llama', 'assets/llama.png');
-
-            this.game.load.image('coin_sun', 'assets/jeton-soleil.png');
-            this.game.load.image('coin_bird', 'assets/jeton-oiseau.png');
-            this.game.load.image('coin_lizard', 'assets/jeton-lezard.png');
-
-            // load audio
-            this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
-            this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
-            this.game.load.audio('hit', 'assets/sfx/hit.ogg');
-            this.game.load.audio('sliding', 'assets/sfx/sliding.ogg');
 
             // Init grid structure.
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
@@ -122,6 +108,8 @@ function (constants, Player, Coin) {
             createCoin(this, 'coin_sun', this.game.world.centerX);
             createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
             createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
+            var coinSelected = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_selected');
+            coinSelected.anchor.set(0.5, 0.5);
 
             // create GUI
             this.createGUI();
