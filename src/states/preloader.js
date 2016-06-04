@@ -18,7 +18,10 @@ define(function () {
 
             this.load.setPreloadSprite(this.preloadBar);
 
-            /** Game state stuff **/
+            // UI elements.
+            this.game.load.image('play_btn', 'assets/ui/play_btn.png');
+
+            // Game state stuff
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('arena', 'assets/arena.png');

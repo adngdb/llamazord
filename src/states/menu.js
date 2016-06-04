@@ -5,22 +5,19 @@ define(function () {
     };
 
     Menu.prototype = {
-        preload: function () {
-            this.game.load.image('play_btn', 'assets/ui/play_btn.png');
-        },
-
         create: function () {
             // Background.
             // Title.
             // Buttons.
-            this.game.make.button(
+            var btn = this.game.add.button(
                 this.game.world.centerX,
-                this.game.world.centerY,
+                this.game.world.centerY - 200,
                 'play_btn',
                 this.onPlay,
                 this,
                 2, 1, 0
             );
+            btn.anchor.set(0.5, 0.5);
         },
 
         onPlay: function () {

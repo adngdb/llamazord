@@ -20,6 +20,7 @@ function (constants, Player, Coin) {
 
         this.currentCoin = 'coin_sun';
         this.currentPlayer = 0;
+
         this.players = [];
 
         this.gameState = PLAYER_ACTION_STATE;
@@ -54,7 +55,6 @@ function (constants, Player, Coin) {
         },
 
         preload: function() {
-
             // Init grid structure.
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
