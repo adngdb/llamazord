@@ -18,7 +18,6 @@ function (constants, Player) {
         this.grid = [];
 
         this.currentCoin = 'coin_sun';
-
         this.currentplayer = 0;
         this.players = [];
 
@@ -199,6 +198,10 @@ function (constants, Player) {
             var xClickPos = this.input.activePointer.x;
 
             var column = this.getColumn(xClickPos);
+            console.log (column);
+            if (column < 0 || column >= constants.game.GRID_WIDTH) {
+                return;
+            }
             var line = this.getLine(column);
 
             if (line == -1) {
