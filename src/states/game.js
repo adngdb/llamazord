@@ -16,7 +16,7 @@ function (constants, Player) {
         },
 
         update: function () {
-        },
+       },
 
         preload: function() {
 
@@ -36,18 +36,24 @@ function (constants, Player) {
             }
         },
 
+		onClick : function(){
+			console.log("prout");	
+		},
         create: function () {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
 
             // set grid sprite
-            var grid = this.game.add.sprite(
+			
+            this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
                 constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
                 'grid'
             );
-            grid.anchor.set(0.5, 0.5);
+			this.gridSprite.inputEnabled = true;
+            this.gridSprite.anchor.set(0.5, 0.5);
+			this.gridSprite.events.onInputUp.add(this.onClick,this);
 
             // set player sprite
             var player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
