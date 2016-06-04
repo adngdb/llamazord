@@ -51,6 +51,9 @@ function (constants, Player) {
         preload: function() {
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
+            this.game.load.image('arena', 'assets/arena.png');
+            this.game.load.image('llama', 'assets/llama.png');
+
             this.game.load.image('coin_sun', 'assets/jeton-soleil.png');
             this.game.load.image('coin_bird', 'assets/jeton-oiseau.png');
             this.game.load.image('coin_lizard', 'assets/jeton-lezard.png');
@@ -72,6 +75,14 @@ function (constants, Player) {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
+
+            // set arena background
+            var arena = this.game.add.sprite(
+                this.game.world.centerX,
+                constants.stage.ARENA_HEIGHT / 2,
+                'arena'
+            );
+            arena.anchor.set(0.5, 0.5);
 
             // set grid sprite
             this.gridSprite = this.game.add.sprite(
@@ -110,7 +121,8 @@ function (constants, Player) {
             this.createGrid();
 
             // create players
-            this.players[0] = new Player();
+            this.players[0] = new Player(this.game, 0);
+            this.players[1] = new Player(this.game, 1);
 
             // start audio
             this.game.sound.play('ambiance');

@@ -6,6 +6,7 @@ define({
         HEIGHT: 1280,
         CELL_SIZE: 90,
         COIN_START_HEIGHT: 650,
+        ARENA_HEIGHT: 470,
     },
 
     game: {
