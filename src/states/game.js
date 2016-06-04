@@ -49,13 +49,13 @@ this.coins='coin';//par defaut coin =coin
         preload: function() {
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
-            this.game.load.image('player', 'assets/player_blue.png');
-            this.game.load.image('player_b', 'assets/player_blue.png');
-            this.game.load.image('player_g', 'assets/player_green.png');
-            this.game.load.image('player_r', 'assets/player_red.png');
-            this.game.load.image('coin', 'assets/coin.png');
-            this.game.load.image('coin_g', 'assets/coin_green.png');
-            this.game.load.image('coin_r', 'assets/coin_red.png');
+            this.game.load.image('player', 'assets/jeton-soleil.png');
+            this.game.load.image('player_b', 'assets/jeton-soleil.png');
+            this.game.load.image('player_g', 'assets/jeton-oiseau.png');
+            this.game.load.image('player_r', 'assets/jeton-lezard.png');
+            this.game.load.image('coin', 'assets/jeton-soleil.png');
+            this.game.load.image('coin_g', 'assets/jeton-oiseau.png');
+            this.game.load.image('coin_r', 'assets/jeton-lezard.png');
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience.ogg');
