@@ -16,6 +16,7 @@ function (constants, Player) {
         },
 
         update: function () {
+			
        },
 
         preload: function() {
@@ -38,6 +39,7 @@ function (constants, Player) {
 
 		onClick : function(){
 			console.log("prout");	
+			this.fire();
 		},
         create: function () {
             // set background sprite
@@ -66,7 +68,7 @@ function (constants, Player) {
             this.players[0] = new Player();
 
             var test = constants.game.GRID_WIDTH;
-
+/*
             this.click(240);
             this.click(240);
             this.click(240);
@@ -74,7 +76,7 @@ function (constants, Player) {
             this.click(240);
             this.click(60);
             this.click(420);
-            this.click(600);
+            this.click(600);*/
         },
 
         click: function(xClickPos) {
