@@ -28,10 +28,34 @@ function (constants, Player, Coin) {
         this.roundActionsCount = 0;
         this.playerUpgrades = [];
         this.animating = 0;
+
+        // all coin images
+        this.coinSelected = null;
+        this.coinOver = null;
+        this.coinSun = null;
+        this.coinBird = null;
+        this.coinLizard = null;
     };
 
     Game.prototype = {
         update: function () {
+            // if (this.coinSun.input.pointerOver(this.game.mouse)) {
+            //     console.log("OVER 1");
+            //     this.coinOver.visible = true;
+            //     this.coinOver.position.x = this.coinSun.position.x;
+            // } else if (this.coinLizard.input.pointerOver(this.game.mouse)) {
+            //     console.log("OVER 2");
+            //     this.coinOver.visible = true;
+            //     this.coinOver.position.x = this.coinLizard.position.x;
+            // } else if (this.coinBird.input.pointerOver(this.game.mouse)) {
+            //     console.log("OVER 3");
+            //     this.coinOver.visible = true;
+            //     this.coinOver.position.x = this.coinBird.position.x;
+            // } else {
+            //     console.log("OVER ELSE");
+            //     this.coinOver.visible = false;
+            // }
+
             if (this.animating != 0) {
                 return;
             }
@@ -88,9 +112,10 @@ function (constants, Player, Coin) {
             this.gridSprite.events.onInputUp.add(this.onClick,this);
 
             // Create coin choice sprites.
-            function setCurrentCoin(coin) {
+            function setCurrentCoin(coin, x) {
                 return function () {
                     this.currentCoin = coin;
+                    this.coinSelected.position.x = x;
                 };
             }
 
@@ -102,14 +127,21 @@ function (constants, Player, Coin) {
                 );
                 coin.anchor.set(0.5, 0.5);
                 coin.inputEnabled = true;
-                coin.events.onInputUp.add(setCurrentCoin(name), ctx);
+                coin.events.onInputUp.add(setCurrentCoin(name, x), ctx);
+                return coin;
             }
 
-            createCoin(this, 'coin_sun', this.game.world.centerX);
-            createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
-            createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
-            var coinSelected = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_selected');
-            coinSelected.anchor.set(0.5, 0.5);
+            // var coinSelected2 = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY-90, 'coin_selected');
+            // coinSelected2.anchor.set(0.5, 0.5);
+
+            this.coinSun = createCoin(this, 'coin_sun', this.game.world.centerX);
+            this.coinBird = createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
+            this.coinLizard = createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
+            this.coinSelected = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_selected');
+            this.coinSelected.anchor.set(0.5, 0.5);
+            this.coinOver = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_over');
+            this.coinOver.anchor.set(0.5, 0.5);
+            this.coinOver.visible = false;
 
             // create GUI
             this.createGUI();
@@ -445,7 +477,7 @@ function (constants, Player, Coin) {
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT -1;
-            while (this.grid[column][bottom].value != NO_COIN) {
+            while (bottom >=0 && this.grid[column][bottom].value != NO_COIN) {
                 --bottom;
             }
 
