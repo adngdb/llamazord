@@ -11,11 +11,16 @@ function (constants, Player) {
     const COMBAT_STATE = 'COMBAT_STATE';
     const GAME_OVER_STATE = 'GAME_OVER_STATE';
 
+    const NO_COIN = 'no_coin';
+    const SUN_COIN = 'sun_coin';
+    const LIZARD_COIN = 'lizard_coin';
+    const BIRD_COIN = 'bird_coin';
+
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
         this.grid = [];
 
-this.coins='coin';//par defaut coin =coin
+        this.coins='coin';//par defaut coin =coin
         this.currentplayer = 0;
         this.players = [];
 
@@ -53,9 +58,9 @@ this.coins='coin';//par defaut coin =coin
             this.game.load.image('player_b', 'assets/jeton-soleil.png');
             this.game.load.image('player_g', 'assets/jeton-oiseau.png');
             this.game.load.image('player_r', 'assets/jeton-lezard.png');
-            this.game.load.image('coin', 'assets/jeton-soleil.png');
-            this.game.load.image('coin_g', 'assets/jeton-oiseau.png');
-            this.game.load.image('coin_r', 'assets/jeton-lezard.png');
+            this.game.load.image('sun_coin', 'assets/jeton-soleil.png');
+            this.game.load.image('bird_coin', 'assets/jeton-oiseau.png');
+            this.game.load.image('lizard_coin', 'assets/jeton-lezard.png');
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience.ogg');
@@ -63,7 +68,7 @@ this.coins='coin';//par defaut coin =coin
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
                 for (var j = 0; j < constants.game.GRID_HEIGHT; ++j) {
-                    this.grid[i][j] = constants.coin.NO_COIN;
+                    this.grid[i][j] = NO_COIN;
                 }
             }
         },
@@ -73,17 +78,18 @@ this.coins='coin';//par defaut coin =coin
 			this.fire();
 		},
         onClick_b :function(){
-            console.log("prout_blue");
-            this.coins="coin";
+            console.log("prout_centre");
+            this.coins = SUN_COIN;
         },
         onClick_g :function(){
-            console.log("prout_green");
-            this.coins="coin_g";
+            console.log("prout_droite");
+            this.coins = BIRD_COIN;
         },
         onClick_r :function(){
-            console.log("prout_red");
-            this.coins="coin_r";
+            console.log("prout_gauche");
+            this.coins = LIZARD_COIN;
         },
+
         create: function () {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
@@ -219,7 +225,7 @@ this.coins='coin';//par defaut coin =coin
                 this.invalidColumn();
             } else {
                 // create coin
-                this.grid[column][line] = 1;
+                this.grid[column][line] = this.coins;
                 // console.log("set coin in : " + column +" "+ line);
                 // TODO: set the "right" coin type
                 this.createCoin(
@@ -268,7 +274,7 @@ this.coins='coin';//par defaut coin =coin
                 while(currY < constants.game.GRID_HEIGHT-2) {
                     var currentCell = this.grid[currX][currY];
                     var tmp = 1;
-                    if (currentCell != constants.coin.NO_COIN) {
+                    if (currentCell != NO_COIN) {
                         var currentMatch = [[currX,currY]];
                         while (currX+tmp < constants.game.GRID_WIDTH
                             && currY+tmp >= 0
@@ -304,7 +310,7 @@ this.coins='coin';//par defaut coin =coin
                 while(cptX < constants.game.GRID_WIDTH-2) {
                     var currentCell = this.grid[cptX][j];
                     var tmpX = 1;
-                    if (currentCell != constants.coin.NO_COIN) {
+                    if (currentCell != NO_COIN) {
                         var currentMatch = [[cptX,j]];
                         while (cptX+tmpX< constants.game.GRID_WIDTH && currentCell == this.grid[cptX+tmpX][j]) {
                             currentMatch.push([cptX+tmpX, j]);
@@ -334,7 +340,7 @@ this.coins='coin';//par defaut coin =coin
                 while(currY > 2) {
                     var currentCell = this.grid[currX][currY];
                     var tmp = 1;
-                    if (currentCell != constants.coin.NO_COIN) {
+                    if (currentCell != NO_COIN) {
                         var currentMatch = [[currX,currY]];
                         while (currX+tmp < constants.game.GRID_WIDTH
                             && currY-tmp >= 0
@@ -370,7 +376,7 @@ this.coins='coin';//par defaut coin =coin
                 while(cptY >2) {
                     var currentCell = this.grid[i][cptY];
                     var tmpY = 1;
-                    if (currentCell != constants.coin.NO_COIN) {
+                    if (currentCell != NO_COIN) {
                         var currentMatch = [[i,cptY]];
                         while (cptY-tmpY >= 0 && currentCell == this.grid[i][cptY-tmpY]) {
                             currentMatch.push([i, cptY-tmpY]);
@@ -413,16 +419,16 @@ this.coins='coin';//par defaut coin =coin
         getColumn: function(xClickPos) {
             return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
         },
+
 		fire: function(){
-			//console.log("bonjour");
-		var a= this.input.activePointer.x;
-		console.log('X:' + this.input.activePointer.x);
+    		var a = this.input.activePointer.x;
+    		console.log('X:' + this.input.activePointer.x);
 			this.click(a);
 		},
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT -1;
-            while (this.grid[column][bottom] != constants.coin.NO_COIN) {
+            while (this.grid[column][bottom] != NO_COIN) {
                 --bottom;
             }
 

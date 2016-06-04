@@ -17,11 +17,6 @@ define({
         MAX_HEALTH: 100
     },
 
-    coin:{
-        NO_COIN: null
-
-    },
-
     inputs: {
         CLICK: 'click',
         // LEFT: 'left',
