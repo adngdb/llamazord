@@ -6,7 +6,7 @@ function (constants, Player) {
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
         this.grid = [];
-
+this.coins='coin';//par defaut coin =coin
         this.currentplayer = 0;
         this.players = [];
     };
@@ -16,7 +16,7 @@ function (constants, Player) {
         },
 
         update: function () {
-			
+
        },
 
         preload: function() {
@@ -24,7 +24,12 @@ function (constants, Player) {
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('player', 'assets/player_blue.png');
+            this.game.load.image('player_b', 'assets/player_blue.png');
+            this.game.load.image('player_g', 'assets/player_green.png');
+            this.game.load.image('player_r', 'assets/player_red.png');
             this.game.load.image('coin', 'assets/coin.png');
+            this.game.load.image('coin_g', 'assets/coin_green.png');
+            this.game.load.image('coin_r', 'assets/coin_red.png');
 
             // manage inputs
             this.computeInput();
@@ -38,16 +43,28 @@ function (constants, Player) {
         },
 
 		onClick : function(){
-			console.log("prout");	
+			//console.log("prout");
 			this.fire();
 		},
+        onClick_b :function(){
+            console.log("prout_blue");
+            this.coins="coin";
+        },
+        onClick_g :function(){
+            console.log("prout_green");
+            this.coins="coin_g";
+        },
+        onClick_r :function(){
+            console.log("prout_red");
+            this.coins="coin_r";
+        },
         create: function () {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
 
             // set grid sprite
-			
+
             this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
                 constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
@@ -60,6 +77,23 @@ function (constants, Player) {
             // set player sprite
             var player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
             player.anchor.set(0.5, 0.5);
+
+            // other coins
+            var player_g = this.game.add.sprite(500,640, 'player_g');
+            player_g.anchor.set(0.5, 0.5);
+            var player_r = this.game.add.sprite(170,595, 'player_r');
+            player_g.anchor.set(0.5, 0.5);
+
+            player_g.inputEnabled = true;
+            player_g.events.onInputUp.add(this.onClick_g, this);
+
+            player_r.inputEnabled = true;
+            player_r.events.onInputUp.add(this.onClick_r, this);
+
+            player.inputEnabled = true;
+            player.events.onInputUp.add(this.onClick_b, this);
+            /*var player_r = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player_red');
+            player.anchor.set(0.7, 0.7);*/
             // create GUI
             this.createGUI();
             this.createGrid();
@@ -127,7 +161,8 @@ function (constants, Player) {
             var coinYStart = constants.stage.COIN_START_HEIGHT + constants.stage.CELL_SIZE/2;
             var coinXStart = (column + 1) * constants.stage.CELL_SIZE;
 
-            var coin = this.game.add.sprite(coinXStart, coinYStart, 'coin');
+            var coin = this.game.add.sprite(coinXStart, coinYStart, this.coins);
+            //var coin = this.game.add.sprite(coinXStart, coinYStart, 'coin');
             coin.anchor.set(0.5, 0.5);
             var coinTween = this.game.add.tween(coin);
 
@@ -143,7 +178,7 @@ function (constants, Player) {
             return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
         },
 		fire: function(){
-			console.log("bonjour");
+			//console.log("bonjour");
 		var a= this.input.activePointer.x;
 		console.log('X:' + this.input.activePointer.x);
 			this.click(a);
