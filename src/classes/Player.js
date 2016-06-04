@@ -6,12 +6,12 @@ function (constants) {
         {
             x: constants.stage.WIDTH / 4,
             y: constants.stage.ARENA_HEIGHT / 2,
-            sprite: 'llama',
+            sprite: 'llama-raw-idle',
         },
         {
             x: constants.stage.WIDTH / 4 * 3,
             y: constants.stage.ARENA_HEIGHT / 2,
-            sprite: 'llama',
+            sprite: 'llama-raw-idle',
         },
     ];
 
@@ -32,8 +32,10 @@ function (constants) {
             this.health = MAX_HEALTH;
 
             var playerData = playersData[this.playerNumber];
-            var sprite = this.llama.create(playerData.x, playerData.y, playerData.sprite);
+            var sprite = this.llama.create(playerData.x, playerData.y, playerData.sprite, 5);
             sprite.anchor.set(0.5, 0.5);
+            var anim = sprite.animations.add('idle');
+            anim.play(24, true);
 
             if (this.playerNumber === 1) {
                 sprite.scale.x *= -1;

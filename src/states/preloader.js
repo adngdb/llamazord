@@ -27,6 +27,9 @@ define(function () {
             this.game.load.image('arena', 'assets/arena.png');
             this.game.load.image('llama', 'assets/llama.png');
 
+            // Llama assets.
+            this.game.load.spritesheet('llama-raw-idle', 'assets/llama/llama-raw-idle.png', 470, 470, 25);
+
             // coin assets
             this.game.load.image('coin_sun', 'assets/jeton-soleil.png');
             this.game.load.image('coin_bird', 'assets/jeton-oiseau.png');
