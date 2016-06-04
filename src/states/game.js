@@ -21,6 +21,7 @@ function (constants, Player) {
         preload: function() {
 
             this.game.load.image('background', 'assets/back_green.png');
+            this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('player', 'assets/player_blue.png');
             this.game.load.image('coin', 'assets/coin.png');
 
@@ -39,6 +40,15 @@ function (constants, Player) {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
+
+            // set grid sprite
+            var grid = this.game.add.sprite(
+                this.game.world.centerX,
+                constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
+                'grid'
+            );
+            grid.anchor.set(0.5, 0.5);
+
             // set player sprite
             var player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
             player.anchor.set(0.5, 0.5);
