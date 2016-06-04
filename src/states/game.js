@@ -44,6 +44,7 @@ function (constants, Player) {
             player.anchor.set(0.5, 0.5);
             // create GUI
             this.createGUI();
+            this.createGrid();
 
             // create players
             this.players[0] = new Player();
@@ -61,7 +62,6 @@ function (constants, Player) {
         },
 
         click: function(xClickPos) {
-/** BLOCK to "treat" a click ***/
             var column = this.getColumn(xClickPos);
             var line = this.getLine(column);
             if (line == -1) {
@@ -70,15 +70,26 @@ function (constants, Player) {
             } else {
                 // create coin
                 this.grid[column][line] = 1;
-    /** TODO : set the "right" coin type*/
+                // TODO: set the "right" coin type
                 this.createCoin(column, constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line + 1) * constants.stage.CELL_SIZE);
             }
-/*** END BLOCK to "treat" a click */
         },
 
         createGUI: function () {
         },
 
+        // Used for debugging. Might be deleted later?
+        createGrid: function () {
+            var offsetX = 90 / 2;
+            var offsetY = 90 / 2 + (1280 - 90 * 6);
+
+            for (var i = 0; i < constants.game.GRID_WIDTH; i++) {
+                for (var j = 0; j < constants.game.GRID_HEIGHT; j++) {
+                    var rect = new Phaser.Rectangle(offsetX + i * 90, offsetY + j * 90, 90, 90);
+                    this.game.debug.geom(rect, 'rgba(200,0,0,0.5)');
+                }
+            }
+        },
 
         computeInput: function() {
 
