@@ -12,7 +12,9 @@ console.log('coucou');
     });
 
     require([
-    'states/game'
+    'states/game',
+    'constants',
+    'classes/Player',
     ],
 
     function (Game) {
