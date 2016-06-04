@@ -50,6 +50,9 @@ function (constants, Player) {
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('player', 'assets/player_blue.png');
             this.game.load.image('coin', 'assets/coin.png');
+            // load audio
+            this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
+            this.game.load.audio('ambiance_2', 'assets/sfx/ambience.ogg');
 
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
@@ -83,6 +86,9 @@ function (constants, Player) {
 
             // create players
             this.players[0] = new Player();
+
+            // start audio
+            this.game.sound.play('ambiance');
         },
 
         handlePlayerAction: function () {
