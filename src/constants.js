@@ -1,12 +1,17 @@
 define({
     DEBUG: false,
 
+    stage: {
+        WIDTH: 720,
+        HEIGHT: 1280,
+    },
+
     game: {
         GRID_WIDTH: 7,
         GRID_HEIGHT: 5
     },
 
-    player:{
+    player: {
         MAX_HEALTH: 100
     },
 

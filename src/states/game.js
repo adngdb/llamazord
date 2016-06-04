@@ -1,19 +1,17 @@
-define(
-    ['constants',
-   'classes/Player',
-
+define([
+    'constants',
+    'classes/Player',
 ],
-    function (constants, Player) {
+function (constants, Player) {
     var Game = function (game) {
-        //  grid format : [GRID_WIDTH][GRID_HEIGHT]
+        // grid format : [GRID_WIDTH][GRID_HEIGHT]
         this.grid = [];
+
         this.currentplayer = 0;
         this.players = [];
     };
 
     Game.prototype = {
-
-
         init: function () {
         },
 
