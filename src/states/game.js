@@ -140,6 +140,13 @@ function (constants, Player) {
         getColumn: function(xClickPos) {
             return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
         },
+		fire: function(){
+			console.log("bonjour");
+		var a= this.input.activePointer.x;
+		console.log('X:' + this.input.activePointer.x);
+			this.click(a);
+		},
+
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT;
