@@ -19,7 +19,7 @@ function (constants, Player, Coin) {
         this.grid = [];
 
         this.currentCoin = 'coin_sun';
-        this.currentplayer = 0;
+        this.currentPlayer = 0;
         this.players = [];
 
         this.gameState = PLAYER_ACTION_STATE;
