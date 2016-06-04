@@ -3,57 +3,76 @@ define([
     'classes/Player',
 ],
 function (constants, Player) {
+    "use strict";
+
+    const PLAYER_ACTION_STATE = 'PLAYER_ACTION_STATE';
+    const GRID_SOLVING_STATE = 'GRID_SOLVING_STATE';
+    const UPGRADE_STATE = 'UPGRADE_STATE';
+    const COMBAT_STATE = 'COMBAT_STATE';
+    const GAME_OVER_STATE = 'GAME_OVER_STATE';
+
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
         this.grid = [];
 
-        this.currentplayer = 0;
+        this.currentPlayer = 0;
         this.players = [];
+
+        this.gameState = PLAYER_ACTION_STATE;
+        this.actionIsDone = false;
+        this.roundActionsCount = 0;
+        this.playerUpgrades = [];
     };
 
     Game.prototype = {
-        init: function () {
+        update: function () {
+            switch (this.gameState) {
+                case PLAYER_ACTION_STATE:
+                    this.handlePlayerAction();
+                    break;
+                case GRID_SOLVING_STATE:
+                    this.handleGridSolving();
+                    break;
+                case UPGRADE_STATE:
+                    this.handleUpgrade();
+                    break;
+                case COMBAT_STATE:
+                    this.handleCombat();
+                    break;
+                case GAME_OVER_STATE:
+                    this.handleGameOver();
+                    break;
+            }
         },
 
-        update: function () {
-
-       },
-
         preload: function() {
-
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('player', 'assets/player_blue.png');
             this.game.load.image('coin', 'assets/coin.png');
 
-
-            for(var i=0; i<constants.game.GRID_WIDTH; ++i) {
+            for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
-                for(var j=0; j<constants.game.GRID_HEIGHT; ++j) {
+                for (var j = 0; j < constants.game.GRID_HEIGHT; ++j) {
                     this.grid[i][j] = constants.coin.NO_COIN;
                 }
             }
         },
 
-		onClick : function(){
-			console.log("prout");
-			this.fire();
-		},
         create: function () {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
 
             // set grid sprite
-
             this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
                 constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
                 'grid'
             );
-			this.gridSprite.inputEnabled = true;
+            this.gridSprite.inputEnabled = true;
             this.gridSprite.anchor.set(0.5, 0.5);
-			this.gridSprite.events.onInputUp.add(this.onClick,this);
+            this.gridSprite.events.onInputUp.add(this.onClick,this);
 
             // set player sprite
             var player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
@@ -64,28 +83,92 @@ function (constants, Player) {
 
             // create players
             this.players[0] = new Player();
-
-            this.click(240);
-            this.click(240);
-            this.click(240);
-            this.click(240);
-            this.click(240);
-            this.click(60);
-            this.click(150);
-            this.click(330);
-            this.click(420);
-            this.click(600);
-            this.grid[3][2] = 1;
-            this.grid[4][1] = 1;
-            this.grid[5][0] = 1;
-            this.grid[1][2] = 1;
-            // manage inputs
-            this.computeInput();
         },
 
-        click: function(xClickPos) {
+        handlePlayerAction: function () {
+            if (this.actionIsDone) {
+                this.actionIsDone = false;
+                this.roundActionsCount++;
+                this.changeState(GRID_SOLVING_STATE);
+            }
+        },
+
+        handleGridSolving: function () {
+            var matches = this.computeGrid();
+
+            if (matches.length) {
+                // Stack player upgrades.
+                this.playerUpgrades.push(1);
+                // Remove the matches.
+                // Animate the falling pieces.
+            }
+            // When the grid is stable, go to the next player and state.
+            else {
+                if (this.playerUpgrades.length) {
+                    this.changeState(UPGRADE_STATE);
+                }
+                else {
+                    if (this.roundActionsCount === 6) {
+                        // Note that we do not change the current player. The
+                        // player that plays last this round will play first
+                        // next round.
+                        this.changeState(COMBAT_STATE);
+                    }
+                    else {
+                        this.changePlayer();
+                        this.changeState(PLAYER_ACTION_STATE);
+                    }
+                }
+            }
+        },
+
+        handleUpgrade: function () {
+            // Handle upgrades.
+            var upgrade = this.playerUpgrades.pop();
+            if (upgrade) {
+                // Propose the next upgrade.
+            }
+            else {
+                // All upgrades are done, go to the next state.
+                if (this.roundActionsCount === 6) {
+                    // Note that we do not change the current player. The
+                    // player that plays last this round will play first
+                    // next round.
+                    this.changeState(COMBAT_STATE);
+                }
+                else {
+                    this.changePlayer();
+                    this.changeState(PLAYER_ACTION_STATE);
+                }
+            }
+        },
+
+        handleCombat: function () {
+            this.changeState(PLAYER_ACTION_STATE);
+        },
+
+        handleGameOver: function () {
+            // TODO
+            console.log('Game Over');
+        },
+
+        changePlayer: function () {
+            this.currentPlayer = 1 - this.currentPlayer;
+            console.log('Player now playing: ' + this.currentPlayer);
+        },
+
+        changeState: function (state) {
+            var oldState = this.gameState;
+            this.gameState = state;
+            console.log('State: ' + oldState + ' -> ' + state);
+        },
+
+        onClick: function() {
+            var xClickPos = this.input.activePointer.x;
+
             var column = this.getColumn(xClickPos);
             var line = this.getLine(column);
+
             if (line == -1) {
                 // No space in column
                 this.invalidColumn();
@@ -94,7 +177,11 @@ function (constants, Player) {
                 this.grid[column][line] = 1;
                 // console.log("set coin in : " + column +" "+ line);
                 // TODO: set the "right" coin type
-                this.createCoin(column, constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE);
+                this.createCoin(
+                    column,
+                    constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE
+                );
+                this.actionIsDone = true;
             }
         },
 
@@ -114,26 +201,14 @@ function (constants, Player) {
             }
         },
 
-        computeInput: function() {
-
-            // manage grid (if inputs)
-            this.computeGrid();
-
-            // switch player (if inputs)
-            this.currentplayer = 1 - this.currentplayer;
-        },
-
-        computeGrid:function() {
+        computeGrid: function() {
             // search for "matchs"
-            var matchs = this.getAllMatchs();
-console.log(matchs.length + " found :");
-for (var i=0; i<matchs.length; ++i) {
-    console.log("\t" + matchs[i]);
-}
-            // if (matchs.length != 0) {
-            //     this.removeMatchs();
-            //     this.computeGrid();
-            // }
+            var matches = this.getAllMatchs();
+            console.log(matches.length + " found :");
+            for (var i=0; i<matches.length; ++i) {
+                console.log("\t" + matches[i]);
+            }
+            return matches;
         },
 
         getAllMatchs: function() {
@@ -270,7 +345,6 @@ for (var i=0; i<matchs.length; ++i) {
         },
 
         removeMatchs: function() {
-
         },
 
         createCoin: function(column, ydestination) {
@@ -287,19 +361,12 @@ for (var i=0; i<matchs.length; ++i) {
         },
 
         invalidColumn: function() {
-                console.log("TODO : No place in column");
+            console.log("TODO : No place in column");
         },
 
         getColumn: function(xClickPos) {
             return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
         },
-		fire: function(){
-			console.log("bonjour");
-		var a= this.input.activePointer.x;
-		console.log('X:' + this.input.activePointer.x);
-			this.click(a);
-		},
-
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT -1;

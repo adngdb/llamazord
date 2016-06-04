@@ -1,23 +1,18 @@
-define(
-    ['constants'
+define([
+    'constants'
 ],
-
-    function (constants) {
+function (constants) {
     var Player = function () {
         this.health = constants.MAX_HEALTH;
 
         // image (Llama)
-        this.sprite = null;
+        this.llamaSprite = null;
     };
 
     Player.prototype = {
-        constructor: function() {
-
+        init: function () {
+            this.health = constants.MAX_HEALTH;
         },
-
-        init: function() {
-
-        }
     };
 
     return Player;
