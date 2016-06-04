@@ -1,40 +1,39 @@
-console.log('coucou');
+requirejs.config({
+    baseUrl: 'src/',
 
-(function () {
-    'use strict';
+    paths: {
+        'lib': '../lib'
+    }
+});
 
-    requirejs.config({
-        baseUrl: 'src/',
-
-        paths: {
-            'lib': '../lib'
-        }
-    });
-
-    require([
+require([
     'states/game',
     'constants',
     'classes/Player',
-    ],
+],
+function (Game, constants, Player) {
+    'use strict';
 
-    function (Game) {
-        var game = new Phaser.Game(720, 1280, Phaser.AUTO, 'stage', {
+    var game = new Phaser.Game(
+        constants.stage.WIDTH,
+        constants.stage.HEIGHT,
+        Phaser.AUTO,
+        'stage', {
             init: init,
             create: create
-        });
-
-        function init() {
-            // Activate plugins.
         }
+    );
 
-        function create() {
-        /*    this.game.state.add('Boot', Boot);
-            this.game.state.add('Preload', Preloader);
-            this.game.state.add('Title', Title);*/
-            this.game.state.add('Game', Game);
+    function init() {
+        // Activate plugins.
+    }
 
-            this.game.state.start('Game');
-        }
-    });
+    function create() {
+        // this.game.state.add('Boot', Boot);
+        // this.game.state.add('Preload', Preloader);
+        // this.game.state.add('Title', Title);
+        this.game.state.add('Game', Game);
 
-}());
+        this.game.state.start('Game');
+    }
+});

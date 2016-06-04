@@ -1,13 +1,18 @@
 define({
     DEBUG: false,
 
-    game: {
-        GRID_WIDTH:7,
-        GRID_HEIGHT: 5
+    stage: {
+        WIDTH: 720,
+        HEIGHT: 1280,
     },
 
-    player:{
-        MAX_HEALTH: 100
+    game: {
+        GRID_WIDTH: 7,
+        GRID_HEIGHT: 5,
+    },
+
+    player: {
+        MAX_HEALTH: 100,
     },
 
     inputs: {
