@@ -50,18 +50,28 @@ function (constants, Player) {
 
             var test = constants.game.GRID_WIDTH;
 
+            this.click(240);
+            this.click(240);
+            this.click(240);
+            this.click(240);
+            this.click(240);
+            this.click(60);
+            this.click(420);
+            this.click(600);
+        },
 
-
+        click: function(xClickPos) {
 /** BLOCK to "treat" a click ***/
-            var xClickPos;
-            var ydestination = this.searchYdestination(xClickPos);
-            if (ydestination == -1) {
+            var column = this.getColumn(xClickPos);
+            var line = this.getLine(column);
+            if (line == -1) {
                 // No space in column
                 this.invalidColumn();
             } else {
                 // create coin
-                this.grid[][]
-                this.createCoin(1280 - 45 - (constants.game.GRID_HEIGHT - ydestination)* 90);
+                this.grid[column][line] = 1;
+    /** TODO : set the "right" coin type*/
+                this.createCoin(column, constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line + 1) * constants.stage.CELL_SIZE);
             }
 /*** END BLOCK to "treat" a click */
         },
@@ -83,14 +93,16 @@ function (constants, Player) {
             // search for "matchs"
         },
 
-        createCoin: function(ydestination) {
-            var coinStart = 740;
+        createCoin: function(column, ydestination) {
 
-            var coin = this.game.add.sprite(135, coinStart, 'coin');
+            var coinYStart = constants.stage.COIN_START_HEIGHT + constants.stage.CELL_SIZE/2;
+            var coinXStart = (column + 1) * constants.stage.CELL_SIZE;
+
+            var coin = this.game.add.sprite(coinXStart, coinYStart, 'coin');
             coin.anchor.set(0.5, 0.5);
             var coinTween = this.game.add.tween(coin);
 
-            coinTween.to({ y: ydestination }, (ydestination - coinStart ) );
+            coinTween.to({ y: ydestination }, (ydestination - coinYStart) * 2 );
             coinTween.start();
         },
 
@@ -98,10 +110,12 @@ function (constants, Player) {
                 console.log("TODO : No place in column");
         },
 
-        searchYdestination: function (xClickPos) {
+        getColumn: function(xClickPos) {
+            return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
+        },
+
+        getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT;
-            // Todo : calc Column from xClickPos
-            var column = 1;
             while (this.grid[column][bottom] != constants.coin.NO_COIN) {
                 --bottom;
             }

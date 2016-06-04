@@ -4,6 +4,8 @@ define({
     stage: {
         WIDTH: 720,
         HEIGHT: 1280,
+        CELL_SIZE: 90,
+        COIN_START_HEIGHT: 100,//650,
     },
 
     game: {
