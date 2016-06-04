@@ -16,6 +16,11 @@ function (constants, Player) {
         },
 
         update: function () {
+			
+			if (this.game.input.activePointer.isDown)
+					{
+						this.fire();
+					}
         },
 
         preload: function() {
@@ -74,6 +79,10 @@ function (constants, Player) {
             coinTween.to({ y: ydestination }, (ydestination - coinStart ) );
             coinTween.start();
         },
+		
+		fire: function(){
+			console.log("bonjour");
+		}
 
 
 
