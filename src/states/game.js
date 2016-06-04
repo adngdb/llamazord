@@ -16,7 +16,8 @@ function (constants, Player) {
         },
 
         update: function () {
-        },
+			
+       },
 
         preload: function() {
 
@@ -36,18 +37,25 @@ function (constants, Player) {
             }
         },
 
+		onClick : function(){
+			console.log("prout");	
+			this.fire();
+		},
         create: function () {
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
 
             // set grid sprite
-            var grid = this.game.add.sprite(
+			
+            this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
                 constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
                 'grid'
             );
-            grid.anchor.set(0.5, 0.5);
+			this.gridSprite.inputEnabled = true;
+            this.gridSprite.anchor.set(0.5, 0.5);
+			this.gridSprite.events.onInputUp.add(this.onClick,this);
 
             // set player sprite
             var player = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'player');
@@ -60,7 +68,7 @@ function (constants, Player) {
             this.players[0] = new Player();
 
             var test = constants.game.GRID_WIDTH;
-
+/*
             this.click(240);
             this.click(240);
             this.click(240);
@@ -68,7 +76,7 @@ function (constants, Player) {
             this.click(240);
             this.click(60);
             this.click(420);
-            this.click(600);
+            this.click(600);*/
         },
 
         click: function(xClickPos) {
@@ -134,6 +142,13 @@ function (constants, Player) {
         getColumn: function(xClickPos) {
             return Math.floor( (xClickPos - 45) / constants.stage.CELL_SIZE);
         },
+		fire: function(){
+			console.log("bonjour");
+		var a= this.input.activePointer.x;
+		console.log('X:' + this.input.activePointer.x);
+			this.click(a);
+		},
+
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT;
