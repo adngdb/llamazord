@@ -131,9 +131,6 @@ function (constants, Player, Coin) {
                 return coin;
             }
 
-            // var coinSelected2 = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY-90, 'coin_selected');
-            // coinSelected2.anchor.set(0.5, 0.5);
-
             this.coinSun = createCoin(this, 'coin_sun', this.game.world.centerX);
             this.coinBird = createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
             this.coinLizard = createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
@@ -210,10 +207,6 @@ function (constants, Player, Coin) {
                     }
                 }
 
-
-
-
-
             }
             // When the grid is stable, go to the next player and state.
             else {
@@ -226,6 +219,7 @@ function (constants, Player, Coin) {
                         // player that plays last this round will play first
                         // next round.
                         this.changeState(COMBAT_STATE);
+                        this.roundActionsCount = 0;
                     }
                     else {
                         this.changePlayer();
@@ -257,7 +251,22 @@ function (constants, Player, Coin) {
         },
 
         handleCombat: function () {
-            this.changeState(PLAYER_ACTION_STATE);
+            for (var i=0; i<3; ++i) {
+                // player 0 attack
+                var player1Attack = 1;
+                var player2Defense = 1;
+                this.players[1].hit(player1Attack-player2Defense);
+                // player 1 attack
+                var player2Attack = 1;
+                var player1Defense = 1;
+                this.players[0].hit(player2Attack-player1Defense);
+            }
+
+            if (this.players[0].health < 0 || this.players[1].health <0) {
+                this.changeState(GAME_OVER_STATE);
+            } else {
+                this.changeState(PLAYER_ACTION_STATE);
+            }
         },
 
         handleGameOver: function () {
