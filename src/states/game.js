@@ -113,7 +113,6 @@ function (constants, Player, Coin) {
 
             // create GUI
             this.createGUI();
-            this.createGrid();
 
             // create players
             this.players[0] = new Player(this.game, 0);
@@ -167,7 +166,7 @@ function (constants, Player, Coin) {
                             currTween.to({ y: ydestination }, (ydestination - currY) * 2 );
                             currTween.start();
                             ++this.animating;
-                            currTween.onComplete.add(this.endof.bind(this));
+                            currTween.onComplete.add(this.onCoinTweenFinished.bind(this));
                             // update "new" position
                             this.grid[i][firstAvailableCell].sprite = this.grid[i][j].sprite;
                             this.grid[i][firstAvailableCell].value = this.grid[i][j].value;
@@ -252,7 +251,6 @@ function (constants, Player, Coin) {
             var xClickPos = this.input.activePointer.x;
 
             var column = this.getColumn(xClickPos);
-            console.log (column);
             if (column < 0 || column >= constants.game.GRID_WIDTH) {
                 return;
             }
@@ -277,19 +275,6 @@ function (constants, Player, Coin) {
         },
 
         createGUI: function () {
-        },
-
-        // Used for debugging. Might be deleted later?
-        createGrid: function () {
-            var offsetX = 90 / 2;
-            var offsetY = 90 / 2 + (1280 - 90 * 6);
-
-            for (var i = 0; i < constants.game.GRID_WIDTH; i++) {
-                for (var j = 0; j < constants.game.GRID_HEIGHT; j++) {
-                    var rect = new Phaser.Rectangle(offsetX + i * 90, offsetY + j * 90, 90, 90);
-                    this.game.debug.geom(rect, 'rgba(200,0,0,0.5)');
-                }
-            }
         },
 
         getAllMatchs: function() {
@@ -429,7 +414,6 @@ function (constants, Player, Coin) {
         },
 
         createCoin: function(column, ydestination) {
-
             var coinYStart = constants.stage.COIN_START_HEIGHT + constants.stage.CELL_SIZE/2;
             var coinXStart = (column + 1) * constants.stage.CELL_SIZE;
 
@@ -438,17 +422,17 @@ function (constants, Player, Coin) {
             coin.anchor.set(0.5, 0.5);
             var coinTween = this.game.add.tween(coin);
 
-            coinTween.to({ y: ydestination }, (ydestination - coinYStart) * 2 );
+            coinTween.to({ y: ydestination }, (ydestination - coinYStart) );
             coinTween.start();
-            coinTween.onComplete.add(this.endof.bind(this));
+            coinTween.onComplete.add(this.onCoinTweenFinished.bind(this));
 
             ++this.animating;
             return coin;
         },
 
-        endof: function() {
+        onCoinTweenFinished: function() {
             this.game.sound.play('hit');
-            -- this.animating;
+            --this.animating;
         },
 
         invalidColumn: function() {
