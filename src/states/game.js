@@ -16,7 +16,7 @@ function (constants, Player) {
         },
 
         update: function () {
-			
+
        },
 
         preload: function() {
@@ -26,8 +26,6 @@ function (constants, Player) {
             this.game.load.image('player', 'assets/player_blue.png');
             this.game.load.image('coin', 'assets/coin.png');
 
-            // manage inputs
-            this.computeInput();
 
             for(var i=0; i<constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
@@ -38,7 +36,7 @@ function (constants, Player) {
         },
 
 		onClick : function(){
-			console.log("prout");	
+			console.log("prout");
 			this.fire();
 		},
         create: function () {
@@ -47,7 +45,7 @@ function (constants, Player) {
             background.anchor.set(0.5, 0.5);
 
             // set grid sprite
-			
+
             this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
                 constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
@@ -67,16 +65,22 @@ function (constants, Player) {
             // create players
             this.players[0] = new Player();
 
-            var test = constants.game.GRID_WIDTH;
-/*
             this.click(240);
             this.click(240);
             this.click(240);
             this.click(240);
             this.click(240);
             this.click(60);
+            this.click(150);
+            this.click(330);
             this.click(420);
-            this.click(600);*/
+            this.click(600);
+            this.grid[3][2] = 1;
+            this.grid[4][1] = 1;
+            this.grid[5][0] = 1;
+            this.grid[1][2] = 1;
+            // manage inputs
+            this.computeInput();
         },
 
         click: function(xClickPos) {
@@ -88,8 +92,9 @@ function (constants, Player) {
             } else {
                 // create coin
                 this.grid[column][line] = 1;
+                // console.log("set coin in : " + column +" "+ line);
                 // TODO: set the "right" coin type
-                this.createCoin(column, constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line + 1) * constants.stage.CELL_SIZE);
+                this.createCoin(column, constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE);
             }
         },
 
@@ -118,8 +123,154 @@ function (constants, Player) {
             this.currentplayer = 1 - this.currentplayer;
         },
 
-        computeGrid:function(){
+        computeGrid:function() {
             // search for "matchs"
+            var matchs = this.getAllMatchs();
+console.log(matchs.length + " found :");
+for (var i=0; i<matchs.length; ++i) {
+    console.log("\t" + matchs[i]);
+}
+            // if (matchs.length != 0) {
+            //     this.removeMatchs();
+            //     this.computeGrid();
+            // }
+        },
+
+        getAllMatchs: function() {
+            var matchs = [];
+            // bottom right
+            var diagStartX = 0;
+            var diagStartY = constants.game.GRID_HEIGHT-3;
+            while (diagStartX < constants.game.GRID_WIDTH-2) {
+                //
+                var currX = diagStartX;
+                var currY = diagStartY;
+                while(currY < constants.game.GRID_HEIGHT-2) {
+                    var currentCell = this.grid[currX][currY];
+                    var tmp = 1;
+                    if (currentCell != constants.coin.NO_COIN) {
+                        var currentMatch = [[currX,currY]];
+                        while (currX+tmp < constants.game.GRID_WIDTH
+                            && currY+tmp >= 0
+                            && currentCell == this.grid[currX+tmp][currY+tmp]) {
+                            currentMatch.push([currX+tmp, currY+tmp]);
+                            ++tmp;
+                        }
+                        if (tmp >= 5) {
+                            console.log(" match diag BR: 5" );
+                            // 5 coin aligned
+                            matchs.push(currentMatch.slice(0,3));
+                            matchs.push(currentMatch.slice(2));
+                        } else if (tmp >= 3) {
+                            console.log(" match diag BR: 3" );
+                            // 3 or 4 aligned
+                            matchs.push(currentMatch);
+                        }
+                    }
+                    currX += tmp;
+                    currY += tmp;
+                }
+                // next diagonal
+                if (diagStartY != 0) {
+                    --diagStartY;
+                } else {
+                    ++diagStartX;
+                }
+            }
+
+            // right
+            for (var j=0; j< constants.game.GRID_HEIGHT; ++j) {
+                var cptX = 0;
+                while(cptX < constants.game.GRID_WIDTH-2) {
+                    var currentCell = this.grid[cptX][j];
+                    var tmpX = 1;
+                    if (currentCell != constants.coin.NO_COIN) {
+                        var currentMatch = [[cptX,j]];
+                        while (cptX+tmpX< constants.game.GRID_WIDTH && currentCell == this.grid[cptX+tmpX][j]) {
+                            currentMatch.push([cptX+tmpX, j]);
+                            ++tmpX;
+                        }
+                        if (tmpX >= 5) {
+                            console.log(" match right : 5" );
+                            // 5 coin aligned
+                            matchs.push(currentMatch.slice(0,3));
+                            matchs.push(currentMatch.slice(2));
+                        } else if (tmpX >= 3) {
+                            console.log(" match right : 3" );
+                            // 3 or 4 aligned
+                            matchs.push(currentMatch);
+                        }
+                    }
+                    cptX += tmpX;
+                }
+            }
+            // upper right
+            var diagStartX = 0;
+            var diagStartY = 2;
+            while (diagStartX < constants.game.GRID_WIDTH-2) {
+                //
+                var currX = diagStartX;
+                var currY = diagStartY;
+                while(currY > 2) {
+                    var currentCell = this.grid[currX][currY];
+                    var tmp = 1;
+                    if (currentCell != constants.coin.NO_COIN) {
+                        var currentMatch = [[currX,currY]];
+                        while (currX+tmp < constants.game.GRID_WIDTH
+                            && currY-tmp >= 0
+                            && currentCell == this.grid[currX+tmp][currY-tmp]) {
+                            currentMatch.push([currX+tmp, currY-tmp]);
+                            ++tmp;
+                        }
+                        if (tmp >= 5) {
+                            console.log(" match diag UR: 5" );
+                            // 5 coin aligned
+                            matchs.push(currentMatch.slice(0,3));
+                            matchs.push(currentMatch.slice(2));
+                        } else if (tmp >= 3) {
+                            console.log(" match diag UR: 3" );
+                            // 3 or 4 aligned
+                            matchs.push(currentMatch);
+                        }
+                    }
+                    currX += tmp;
+                    currY -= tmp;
+                }
+                // next diagonal
+                if (diagStartY != constants.game.GRID_HEIGHT-1) {
+                    ++diagStartY;
+                } else {
+                    ++diagStartX;
+                }
+            }
+
+            // upper
+            for (var i=0; i< constants.game.GRID_WIDTH; ++i) {
+                var cptY = constants.game.GRID_WIDTH-1;
+                while(cptY >2) {
+                    var currentCell = this.grid[i][cptY];
+                    var tmpY = 1;
+                    if (currentCell != constants.coin.NO_COIN) {
+                        var currentMatch = [[i,cptY]];
+                        while (cptY-tmpY >= 0 && currentCell == this.grid[i][cptY-tmpY]) {
+                            currentMatch.push([i, cptY-tmpY]);
+                            ++tmpY;
+                        }
+                        if (tmpY >= 3) {
+                            console.log(" match up: 3" );
+                            // 3 or 4 aligned
+                            matchs.push(currentMatch);
+                        }
+                    }
+                    cptY -= tmpY;
+                }
+            }
+
+            return matchs;
+        },
+
+        removeMatchs: function() {
+
         },
 
         createCoin: function(column, ydestination) {
@@ -151,7 +302,7 @@ function (constants, Player) {
 
 
         getLine: function (column) {
-            var bottom = constants.game.GRID_HEIGHT;
+            var bottom = constants.game.GRID_HEIGHT -1;
             while (this.grid[column][bottom] != constants.coin.NO_COIN) {
                 --bottom;
             }
