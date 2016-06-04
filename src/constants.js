@@ -2,12 +2,17 @@ define({
     DEBUG: false,
 
     game: {
-        GRID_WIDTH:7,
+        GRID_WIDTH: 7,
         GRID_HEIGHT: 5
     },
 
     player:{
         MAX_HEALTH: 100
+    },
+
+    coin:{
+        NO_COIN: null
+
     },
 
     inputs: {
