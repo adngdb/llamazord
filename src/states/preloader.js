@@ -20,7 +20,7 @@ define(function () {
 
             // UI elements.
             this.game.load.image('play_btn', 'assets/ui/play_btn.png');
-
+            this.game.load.image('credit_btn', 'assets/ui/credit_btn.png');
             // Game state stuff
             this.game.load.image('player_background', 'assets/player_background.png');
             this.game.load.image('grid', 'assets/grid.png');
@@ -51,6 +51,7 @@ define(function () {
             this.game.load.image('craft', 'assets/player_selected.png');
             // end screen asset
             this.game.load.image('happy-end', 'assets/llama-happy-end.png');
+            //Credit
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
