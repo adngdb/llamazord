@@ -39,6 +39,7 @@ function (constants, Player, Coin) {
         this.coinSun = null;
         this.coinBird = null;
         this.coinLizard = null;
+        this.animOrder = ['sun', 'lizard', 'bird', 'spit'];
     };
 
     Game.prototype = {
@@ -145,12 +146,12 @@ function (constants, Player, Coin) {
             this.createGUI();
 
             //Upgrade GUI
-            this.choice_Upgrade = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'choice_Upgrade');
-            this.choice_Upgrade.anchor.set(0.5, 0.5);
-            this.attack = this.game.add.sprite(this.game.world.centerX + 45, this.game.world.centerY, 'attack');
-            this.attack.anchor.set(0.5, 0.5);
-            this.defense = this.game.add.sprite(this.game.world.centerX - 45, this.game.world.centerY, 'defense');
-            this.defense.anchor.set(0.5, 0.5);
+            // this.choice_Upgrade = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'choice_Upgrade');
+            // this.choice_Upgrade.anchor.set(0.5, 0.5);
+            // this.attack = this.game.add.sprite(this.game.world.centerX + 45, this.game.world.centerY, 'attack');
+            // this.attack.anchor.set(0.5, 0.5);
+            // this.defense = this.game.add.sprite(this.game.world.centerX - 45, this.game.world.centerY, 'defense');
+            // this.defense.anchor.set(0.5, 0.5);
 
             // start audio
             this.game.sound.stopAll();
@@ -171,7 +172,9 @@ function (constants, Player, Coin) {
             this.players[0] = new Player(this.game, 0);
             this.players[1] = new Player(this.game, 1);
 
-            this.createFx('goggles');
+            for (var i=this.animOrder.length-1; i>=0; --i) {
+                this.createFx(this.animOrder[i]);
+            }
 
             // set / reset all default value for a new game
             this.resetGame();
@@ -179,12 +182,14 @@ function (constants, Player, Coin) {
         },
 
         createFx: function (name) {
+            console.log("create FX : " + name);
             var fx = this.game.add.sprite(
                 this.game.world.centerX,
                 235,
                 'attack-' + name
             );
             fx.anchor.set(0.5, 0.5);
+            fx.visible = false;
             var anim = fx.animations.add('run');
             this.fx[name] = {
                 anim: anim,
@@ -195,9 +200,9 @@ function (constants, Player, Coin) {
         resetGame: function() {
             // hide GUI buttons
             this.replayButton.visible = false;
-            this.attack.visible = false;
-            this.choice_Upgrade.visible = false;
-            this.defense.visible = false;
+            // this.attack.visible = false;
+            // this.choice_Upgrade.visible = false;
+            // this.defense.visible = false;
 
             // reset players
             this.players[0].defaultStatePlayer();
@@ -386,7 +391,7 @@ function (constants, Player, Coin) {
                     player0NoPower = false;
 
                     // Set the corresponding animation.
-                    this.animsStack.push(['attack', 'hit', 'goggles']);
+                    this.animsStack.push(['attack', 'hit', this.animOrder[i]]);
                 }
 
                 // player 1 attack
@@ -397,7 +402,7 @@ function (constants, Player, Coin) {
                     player1NoPower = false;
 
                     // Set the corresponding animation.
-                    this.animsStack.push(['hit', 'attack', '-goggles']);
+                    this.animsStack.push(['hit', 'attack', ('-' + this.animOrder[i])]);
                 }
             }
             if (player0NoPower) {
@@ -405,13 +410,13 @@ function (constants, Player, Coin) {
                 this.players[1].hit(1);
 
                 // Set the corresponding animation.
-                this.animsStack.push(['spit', 'hit', 'goggles']);
+                this.animsStack.push(['spit', 'hit', this.animOrder[3]]);
             }
 
             if (player1NoPower) {
                 // Attack "jet d'eau P1"
                 this.players[0].hit(1);
-                this.animsStack.push(['hit', 'spit', '-goggles']);
+                this.animsStack.push(['hit', 'spit', ('-' + this.animOrder[3])]);
             }
 
             this.changeState(COMBAT_ANIM_STATE);
@@ -438,6 +443,7 @@ function (constants, Player, Coin) {
                 else {
                     this.fx[anim].sprite.scale.x = 1;
                 }
+                this.fx[anim].sprite.visible = true;
                 this.fx[anim].anim.play(24);
                 this.fx[anim].anim.onComplete.addOnce(this.onAnimationFinished.bind(this));
             }
@@ -692,6 +698,11 @@ function (constants, Player, Coin) {
 
         onAnimationFinished: function () {
             --this.animating;
+            for (var i=this.animOrder.length-1; i>=0; --i) {
+                if (this.fx[this.animOrder[i]].anim.isFinished) {
+                    this.fx[this.animOrder[i]].sprite.visible = false;
+                }
+            }
         },
 
         invalidColumn: function() {
