@@ -28,6 +28,8 @@ function (constants) {
         this.sprites = {};
         this.upgradeSprites = {};
         this.upgradeSpriteAnim ={};
+        this.allAnimations = [,];
+        this.upgradecounter = 0;
 
 		// [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
 		this.upgradeTable =[,];
@@ -47,10 +49,11 @@ function (constants) {
             for (var i = this.animNames.length - 1; i >= 0; i--) {
                 var anim = this.animNames[i];
                 var spriteName = 'llama-raw-' + anim;
-
                 var sprite = this.llama.create(playerData.x, playerData.y, spriteName);
                 sprite.anchor.set(0.5, 0.5);
                 sprite.visible = false;
+                this.allAnimations[anim]=[];
+                this.allAnimations[anim].push(spriteName);
                 this.anims[anim] = sprite.animations.add(anim);
                 this.sprites[anim] = sprite;
             }
@@ -90,21 +93,56 @@ function (constants) {
             if (typeof loop === 'undefined') {
                 loop = true;
             }
-
+            var playerData = playersData[this.playerNumber];
             this.stopAllAnimations();
+             for (var i = this.animNames.length - 1; i >= 0; i--) {
+                var anim = this.animNames[i];
+                for (var j = this.allAnimations[anim].length - 1; j >= 0; j--) {
 
-            if (this.sprites[anim]) {
-                this.sprites[anim].visible = true;
-            }
-            this.anims[anim].play(24, loop);
-            if (onComplete) {
-                this.anims[anim].onComplete.addOnce(onComplete);
-            }
+                    var animName = this.allAnimations[anim][j];
 
-            if (this.upgradeSpriteAnim[anim]) {
-                this.upgradeSprites[anim].visible = true;
-                this.upgradeSpriteAnim[anim].play(24, loop);
-            }
+                    var sprite = this.llama.create(playerData.x, playerData.y, animName);
+                    sprite.anchor.set(0.5, 0.5);
+                    sprite.visible = true;
+                    var newAnim = sprite.animations.add(anim);
+                    newAnim.killOnComplete = true;
+
+
+                }
+             }
+            //if (this.sprites[anim]) {
+              //  this.sprites[anim].visible = true;
+            //}
+            //this.anims[anim].play(24, loop);
+           // if (onComplete) {
+             //   this.anims[anim].onComplete.addOnce(onComplete);
+            //}
+
+
+
+// <<<<<<< Updated upstream
+//             if (this.upgradeSpriteAnim[anim]) {
+//                 this.upgradeSprites[anim].visible = true;
+//                 this.upgradeSpriteAnim[anim].play(24, loop);
+// =======
+//             if (this.upgradeSpriteAnim[anim]){
+//              this.upgradeSprites[anim].visible = true;
+//                 if(this.upgradeAnimations[this.upgradecounter]){
+
+//                     for (var i = this.upgradeAnimations.length - 1; i >= 0; i--) {
+//                         this.upgradeAnimations[i].play(24,loop);
+//                     }
+
+//                 }
+//                 else{
+//                     this.upgradeSprites[anim].visible = true;
+//                     this.upgradeSpriteAnim[anim].play(24,loop);
+//                 }
+
+//                 this.upgradeAnimations[this.upgradecounter] =this.upgradeSpriteAnim[anim];
+// >>>>>>> Stashed changes
+            // }
+
         },
 
         addUpdate : function(coinType, upgradeType){
@@ -126,8 +164,6 @@ function (constants) {
             if (this.upgradeTable[coinValue][upgradeType] == 0){
 
                 var playerData = playersData[this.playerNumber];
-                var upgradeSpriteName;
-                var upgradeSprite;
                 // check attack or defense
                 switch (upgradeType){
                     case 0:
@@ -140,13 +176,14 @@ function (constants) {
                 //create sprite and animations
                 for (var i = this.animNames.length - 1; i >= 0; i--) {
                     var upAnim = this.animNames[i];
-                    upgradeSpriteName =upgradeSpritePreName + upAnim;
+                    var upgradeSpriteName =upgradeSpritePreName + upAnim;
                     var upgradeSprite = this.llama.create(playerData.x, playerData.y, upgradeSpriteName);
                     upgradeSprite.anchor.set(0.5, 0.5);
                     upgradeSprite.visible = false;
-                    this.upgradeSprites[upAnim] = upgradeSprite;
+                     this.allAnimations[upAnim].push(upgradeSpriteName);
+                    // this.upgradeSprites[upAnim]= upgradeSprite;
 
-                    this.upgradeSpriteAnim[upAnim] = upgradeSprite.animations.add(upAnim);
+                    // this.upgradeSpriteAnim[upAnim] = upgradeSprite.animations.add(upAnim);
                 }
                 if (this.playerNumber === 1) {
                     this.llama.setAll('scale.x',-1);
