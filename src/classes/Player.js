@@ -16,25 +16,26 @@ function (constants) {
     ];
 
     const NORMAL_HIT = 16;
-    const MAX_HEALTH = 20;
+    const MAX_HEALTH = 100;
 
     var Player = function (game, number) {
         this.game = game;
         this.playerNumber = number;
+        this.upgradecounter = 0;
 
         this.animNames = ['idle', 'hit', 'victory', 'death', 'attack', 'spit'];
         this.upgradeSpriteNames = ['llama-sun','llama-lizard','llama-bird'];
-        this.anims = {};
-        this.sprites = {};
+
         this.upgradeSprites = {};
         this.upgradeSpriteAnim ={};
-        this.allAnimations = [,];
-        this.upgradecounter = 0;
 
-		// [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
-		this.upgradeTable =[,];
+        this.allSprites = {};
+        this.allAnimations = {};
+
+        // [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
+        this.upgradeTable = [];
+
         this.llama = this.game.add.group();
-
 
         this.init();
     };
@@ -52,10 +53,11 @@ function (constants) {
                 var sprite = this.llama.create(playerData.x, playerData.y, spriteName);
                 sprite.anchor.set(0.5, 0.5);
                 sprite.visible = false;
-                this.allAnimations[anim]=[];
-                this.allAnimations[anim].push(spriteName);
-                this.anims[anim] = sprite.animations.add(anim);
-                this.sprites[anim] = sprite;
+
+                var animObj = sprite.animations.add(anim);
+
+                this.allSprites[anim] = [sprite];
+                this.allAnimations[anim] = [animObj];
             }
 
             if (this.playerNumber === 1) {
@@ -77,89 +79,48 @@ function (constants) {
             for (var i = this.animNames.length - 1; i >= 0; i--) {
                 var anim = this.animNames[i];
 
-                if (this.anims[anim].isPlaying) {
-                    this.anims[anim].stop(true);
-                }
-                if (this.sprites[anim]) {
-                    this.sprites[anim].visible = false;
-                }
-                if (this.upgradeSprites[anim]) {
-                    this.upgradeSprites[anim].visible = false;
+                for (var j = this.allAnimations[anim].length - 1; j >= 0; j--) {
+                    this.allAnimations[anim][j].stop(true);
+                    this.allSprites[anim][j].visible = false;
                 }
             }
         },
 
         animate: function (anim, loop, onComplete) {
+            console.log('animate: ' + anim);
             if (typeof loop === 'undefined') {
                 loop = true;
             }
-            var playerData = playersData[this.playerNumber];
+
             this.stopAllAnimations();
-             for (var i = this.animNames.length - 1; i >= 0; i--) {
-                var anim = this.animNames[i];
-                for (var j = this.allAnimations[anim].length - 1; j >= 0; j--) {
+            var playerData = playersData[this.playerNumber];
 
-                    var animName = this.allAnimations[anim][j];
+            for (var i = this.allSprites[anim].length - 1; i >= 0; i--) {
+                var sprite = this.allSprites[anim][i];
+                sprite.visible = true;
 
-                    var sprite = this.llama.create(playerData.x, playerData.y, animName);
-                    sprite.anchor.set(0.5, 0.5);
-                    sprite.visible = true;
-                    var newAnim = sprite.animations.add(anim);
-                    newAnim.killOnComplete = true;
-
-
+                var animObj = this.allAnimations[anim][i];
+                animObj.play(24, loop);
+                if (i === 0 && onComplete) {
+                    animObj.onComplete.addOnce(onComplete);
                 }
-             }
-            //if (this.sprites[anim]) {
-              //  this.sprites[anim].visible = true;
-            //}
-            //this.anims[anim].play(24, loop);
-           // if (onComplete) {
-             //   this.anims[anim].onComplete.addOnce(onComplete);
-            //}
-
-
-
-// <<<<<<< Updated upstream
-//             if (this.upgradeSpriteAnim[anim]) {
-//                 this.upgradeSprites[anim].visible = true;
-//                 this.upgradeSpriteAnim[anim].play(24, loop);
-// =======
-//             if (this.upgradeSpriteAnim[anim]){
-//              this.upgradeSprites[anim].visible = true;
-//                 if(this.upgradeAnimations[this.upgradecounter]){
-
-//                     for (var i = this.upgradeAnimations.length - 1; i >= 0; i--) {
-//                         this.upgradeAnimations[i].play(24,loop);
-//                     }
-
-//                 }
-//                 else{
-//                     this.upgradeSprites[anim].visible = true;
-//                     this.upgradeSpriteAnim[anim].play(24,loop);
-//                 }
-
-//                 this.upgradeAnimations[this.upgradecounter] =this.upgradeSpriteAnim[anim];
-// >>>>>>> Stashed changes
-            // }
-
+            }
         },
 
-        addUpdate : function(coinType, upgradeType){
+        addUpdate: function(coinType, upgradeType){
             var coinValue;
             var upgradeSpritePreName;
             switch(coinType){
                 case 'coin_sun':
                     coinValue = 0;
-                break;
+                    break;
                 case 'coin_lizard':
                     coinValue = 1;
-                break;
+                    break;
                 case 'coin_bird':
                     coinValue = 2;
-                break;
+                    break;
             }
-
 
             if (this.upgradeTable[coinValue][upgradeType] == 0){
 
@@ -168,28 +129,29 @@ function (constants) {
                 switch (upgradeType){
                     case 0:
                         upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-attack-";
-                    break;
+                        break;
                     case 1:
                         upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-defense-";
-                    break;
+                        break;
                 }
                 //create sprite and animations
                 for (var i = this.animNames.length - 1; i >= 0; i--) {
-                    var upAnim = this.animNames[i];
-                    var upgradeSpriteName =upgradeSpritePreName + upAnim;
-                    var upgradeSprite = this.llama.create(playerData.x, playerData.y, upgradeSpriteName);
-                    upgradeSprite.anchor.set(0.5, 0.5);
-                    upgradeSprite.visible = false;
-                     this.allAnimations[upAnim].push(upgradeSpriteName);
-                    // this.upgradeSprites[upAnim]= upgradeSprite;
+                    var anim = this.animNames[i];
+                    var upgradeSpriteName = upgradeSpritePreName + anim;
 
-                    // this.upgradeSpriteAnim[upAnim] = upgradeSprite.animations.add(upAnim);
+                    var sprite = this.llama.create(playerData.x, playerData.y, upgradeSpriteName);
+                    sprite.anchor.set(0.5, 0.5);
+                    sprite.visible = false;
+
+                    var animObj = sprite.animations.add(anim);
+
+                    this.allSprites[anim].push(sprite);
+                    this.allAnimations[anim].push(animObj);
                 }
+
                 if (this.playerNumber === 1) {
-                    this.llama.setAll('scale.x',-1);
+                    this.llama.setAll('scale.x', -1);
                 }
-
-
             }
 
             this.upgradeTable[coinValue][upgradeType]++;
