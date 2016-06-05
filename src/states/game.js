@@ -294,7 +294,7 @@ function (constants, Player, Coin) {
                     this.changeState(UPGRADE_STATE);
                 }
                 else {
-                    if (this.roundActionsCount === 6) {
+                    if (this.roundActionsCount === 5) {
                         // Note that we do not change the current player. The
                         // player that plays last this round will play first
                         // next round.
@@ -364,11 +364,12 @@ function (constants, Player, Coin) {
             }
             else {
                 // All upgrades are done, go to the next state.
-                if (this.roundActionsCount === 6) {
+                if (this.roundActionsCount === 5) {
                     // Note that we do not change the current player. The
                     // player that plays last this round will play first
                     // next round.
                     this.changeState(COMBAT_RESOLVE_STATE);
+                    this.roundActionsCount = 0;
                 }
                 else {
                     this.changePlayer();
