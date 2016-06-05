@@ -22,9 +22,14 @@ function (constants) {
         this.game = game;
         this.playerNumber = number;
 
+<<<<<<< Updated upstream
         this.animNames = ['idle', 'hit', 'victory', 'death'];
         this.anims = {};
         this.sprites = {};
+=======
+		// [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
+		this.upgradeTable =[,];
+>>>>>>> Stashed changes
 
         this.llama = this.game.add.group();
 
@@ -70,9 +75,36 @@ function (constants) {
             if (typeof loop === 'undefined') {
                 loop = true;
             }
+<<<<<<< Updated upstream
             this.stopAllAnimations();
             this.sprites[anim].visible = true;
             this.anims[anim].play(24, loop);
+=======
+
+			for(var i = 0 ; i<3; i++){
+                this.upgradeTable[i] = [];
+				for(var j =0 ; j<2;j++){
+					this.upgradeTable[i][j] = 0;
+				}
+			}
+        },
+        addUpdate : function(coinType, upgradeType){
+            var coinValue;
+            switch(coinType){
+                case 'coin_sun':
+                    coinValue = 0;
+                break;
+                case 'coin_lizard':
+                    coinValue = 1;
+                break;
+                case 'coin_bird':
+                    coinValue = 2;
+                break;
+            }
+
+            this.upgradeTable[coinValue][upgradeType]++;
+            console.log('bien ajouté');
+>>>>>>> Stashed changes
         },
 
         hit: function(power) {
@@ -87,6 +119,7 @@ function (constants) {
             console.log("player : " + this.playerNumber + "| remaining health : " + this.health);
         }
     };
+
 
     return Player;
 });

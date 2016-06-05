@@ -16,6 +16,7 @@ function (constants, Player, Coin) {
 
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
+        this.madeAChoice = false;
         this.grid = [];
 
         this.currentCoin = 'coin_sun';
@@ -27,6 +28,7 @@ function (constants, Player, Coin) {
         this.actionIsDone = false;
         this.roundActionsCount = 0;
         this.playerUpgrades = [];
+
         this.animating = 0;
 
         // all coin images
@@ -35,6 +37,8 @@ function (constants, Player, Coin) {
         this.coinSun = null;
         this.coinBird = null;
         this.coinLizard = null;
+        this.currUpgrade = null;
+
     };
 
     Game.prototype = {
@@ -79,6 +83,7 @@ function (constants, Player, Coin) {
         },
 
         preload: function() {
+
             // Init grid structure.
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
@@ -143,6 +148,17 @@ function (constants, Player, Coin) {
             // create GUI
             this.createGUI();
 
+            //Upgrade GUI
+            this.choice_Upgrade = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'choice_Upgrade');
+            this.choice_Upgrade.anchor.set(0.5, 0.5);
+            this.choice_Upgrade.visible = false;
+            this.attack = this.game.add.sprite(this.game.world.centerX + 45, this.game.world.centerY, 'attack');
+            this.attack.anchor.set(0.5, 0.5);
+            this.attack.visible = false;
+            this.defense = this.game.add.sprite(this.game.world.centerX - 45, this.game.world.centerY, 'defense');
+            this.defense.anchor.set(0.5, 0.5);
+            this.defense.visible = false;
+
             // create players
             this.players[0] = new Player(this.game, 0);
             this.players[1] = new Player(this.game, 1);
@@ -170,6 +186,7 @@ function (constants, Player, Coin) {
                     this.playerUpgrades.push(this.grid[matches[i][0][0]][matches[i][0][1]].value);
                 }
                 // Remove the matches.
+
                 for (var i=0; i<matches.length; ++i) {
                     for (var j=0; j<matches[i].length; ++j) {
                         var currCell = this.grid[matches[i][j][0]][matches[i][j][1]];
@@ -180,6 +197,9 @@ function (constants, Player, Coin) {
                         }
                     }
                 }
+
+                this.changeState(UPGRADE_STATE);
+
                 // Animate the falling pieces.
                 for (var i=0; i< constants.game.GRID_WIDTH; ++i) {
                     for (var j=constants.game.GRID_HEIGHT-1; j>=0; --j) {
@@ -230,10 +250,50 @@ function (constants, Player, Coin) {
         },
 
         handleUpgrade: function () {
-            // Handle upgrades.
-            var upgrade = this.playerUpgrades.pop();
-            if (upgrade) {
+            // Handle upgradesp.
+            if (this.currUpgrade == null) {
+                this.currUpgrade = this.playerUpgrades.pop();
+                console.log("apres pop"+this.currUpgrade)
+                this.madeAChoice = false;
+            }
+            if (this.currUpgrade) {
+
                 // Propose the next upgrade.
+                if(!this.madeAChoice){
+console.log("avant prise de choix : "+this.currUpgrade + " // " + this.madeAChoice);
+
+                    function chooseUpgrade(type, family) {
+                        return function () {
+                            if(!this.madeAChoice){
+                                console.log("ALLplayer : " + this.players);
+                                console.log("player : " + this.players[this.currentPlayer]);
+                                this.players[this.currentPlayer].addUpdate(family, type);
+                                this.madeAChoice = true;
+                                this.currUpgrade = null;
+                                this.choice_Upgrade.visible = false;
+                                this.attack.visible = false;
+                                this.defense.visible = false;
+                                console.log("apres prise de choix  "+this.currUpgrade)
+                            }
+                        };
+                    }
+
+                    //console.log('bou2');
+                    this.choice_Upgrade.visible = true;
+                    this.attack.visible = true;
+                    this.defense.visible = true;
+                    this.attack.inputEnabled = true;
+                    this.defense.inputEnabled = true;
+                    this.attack.events.onInputDown.add(chooseUpgrade(0, this.currUpgrade), this);
+                    this.defense.events.onInputDown.add(chooseUpgrade(1, this.currUpgrade), this);
+
+
+console.log("2E !!!!avant prise de choix : "+this.currUpgrade + " // " + this.madeAChoice);
+                }
+                else {
+                    console.log("pendant return"+this.currUpgrade)
+                    return;
+                }
             }
             else {
                 // All upgrades are done, go to the next state.

@@ -38,6 +38,11 @@ define(function () {
             this.game.load.image('coin_lizard', 'assets/jeton-lezard.png');
             this.game.load.image('coin_selected', 'assets/jeton-clic.png');
             this.game.load.image('coin_over', 'assets/jeton-survol.png');
+            // Upgrade assets
+
+            this.game.load.image('choice_Upgrade', 'assets/choice.png');
+            this.game.load.image('attack', 'assets/player_red.png');
+            this.game.load.image('defense', 'assets/player_green.png');
 
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
