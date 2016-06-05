@@ -319,6 +319,7 @@ function (constants, Player, Coin) {
                 function chooseUpgrade(type, family) {
                     return function () {
                         this.players[this.currentPlayer].addUpdate(family, type);
+                        this.players[this.currentPlayer].animate('idle');
                         upgradeGroup.destroy();
                         this.choosingUpgrade = false;
                     };
