@@ -90,7 +90,6 @@ function (constants) {
         },
 
         animate: function (anim, loop) {
-            console.log("animate : " + anim + " " + loop);
             if (typeof loop === 'undefined') {
                 loop = true;
             }

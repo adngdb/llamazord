@@ -33,8 +33,6 @@ function (constants, Player, Coin) {
         this.animating = 0;
 
         // all coin images
-        this.coinSelected = null;
-        this.coinOver = null;
         this.coinSun = null;
         this.coinBird = null;
         this.coinLizard = null;
@@ -42,22 +40,6 @@ function (constants, Player, Coin) {
 
     Game.prototype = {
         update: function () {
-            // if (this.coinSun.input.pointerOver(this.game.mouse)) {
-            //     console.log("OVER 1");
-            //     this.coinOver.visible = true;
-            //     this.coinOver.position.x = this.coinSun.position.x;
-            // } else if (this.coinLizard.input.pointerOver(this.game.mouse)) {
-            //     console.log("OVER 2");
-            //     this.coinOver.visible = true;
-            //     this.coinOver.position.x = this.coinLizard.position.x;
-            // } else if (this.coinBird.input.pointerOver(this.game.mouse)) {
-            //     console.log("OVER 3");
-            //     this.coinOver.visible = true;
-            //     this.coinOver.position.x = this.coinBird.position.x;
-            // } else {
-            //     console.log("OVER ELSE");
-            //     this.coinOver.visible = false;
-            // }
 
             if (this.animating != 0) {
                 return;
@@ -96,7 +78,7 @@ function (constants, Player, Coin) {
 
 
             // set background sprite
-            var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
+            var background = this.game.add.sprite(this.game.world.centerX, 560, 'player_background');
             background.anchor.set(0.5, 0.5);
 
             // set arena background
@@ -125,33 +107,33 @@ function (constants, Player, Coin) {
             this.gridFront.events.onInputUp.add(this.onClick,this);
 
             // Create coin choice sprites.
-            function setCurrentCoin(coin, x) {
+            function setCurrentCoin(ctx, coin) {
                 return function () {
-                    this.currentCoin = coin;
-                    this.coinSelected.position.x = x;
+                    ctx.currentCoin = coin;
+
+                    // reset coin
+                    ctx.coinSun.setFrames(1, coin=='coin_sun'? 2:0);
+                    ctx.coinBird.setFrames(1, coin=='coin_bird'? 2:0);
+                    ctx.coinLizard.setFrames(1, coin=='coin_lizard'? 2:0);
                 };
             }
 
             function createCoin(ctx, name, x) {
-                var coin = ctx.game.add.sprite(
+                var coin = ctx.game.add.button(
                     x,
                     600,
-                    name
+                    name,
+                    setCurrentCoin(ctx, name),
+                    this,
+                    1, (name=='coin_sun'? 2:0)
                 );
                 coin.anchor.set(0.5, 0.5);
-                coin.inputEnabled = true;
-                coin.events.onInputUp.add(setCurrentCoin(name, x), ctx);
                 return coin;
             }
 
             this.coinSun = createCoin(this, 'coin_sun', this.game.world.centerX);
             this.coinBird = createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
             this.coinLizard = createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
-
-            this.coinSelected = this.game.add.sprite(this.game.world.centerX, 600, 'coin_selected');
-            this.coinSelected.anchor.set(0.5, 0.5);
-            this.coinOver = this.game.add.sprite(this.game.world.centerX, 600, 'coin_over');
-            this.coinOver.anchor.set(0.5, 0.5);
 
             // create GUI
             this.createGUI();
@@ -165,13 +147,14 @@ function (constants, Player, Coin) {
             this.defense.anchor.set(0.5, 0.5);
 
             // start audio
-            this.game.sound.play('ambiance');
+            this.game.sound.stopAll();
+            this.game.sound.play('ambiance', 0.5, true);
 
             // restart GUI
             this.replayButton = this.game.add.button(
                 this.game.world.centerX,
-                this.game.world.centerY,
-                'play_btn',
+                470+405,
+                'happy-end',
                 this.replayButtonOnClick,
                 this,
                 2, 1, 0
@@ -193,7 +176,6 @@ function (constants, Player, Coin) {
             this.attack.visible = false;
             this.choice_Upgrade.visible = false;
             this.defense.visible = false;
-            this.coinOver.visible = false;
 
             // reset players
             this.players[0].defaultStatePlayer();
@@ -214,9 +196,9 @@ function (constants, Player, Coin) {
             player2.anchor.setTo(0.5, 0.5);
 
             //select player
-            this.play1 = this.game.add.sprite(50,500,'craft');
+            this.play1 = this.game.add.sprite(83,620,'craft');
             this.play1.anchor.set(0.5, 0.5);
-            this.play2 = this.game.add.sprite(470,500,'craft');
+            this.play2 = this.game.add.sprite(635,620,'craft');
             this.play2.anchor.set(0.5, 0.5);
             this.play2.visible = false;
         },
@@ -250,8 +232,6 @@ function (constants, Player, Coin) {
                         }
                     }
                 }
-
-                this.changeState(UPGRADE_STATE);
 
                 // Animate the falling pieces.
                 for (var i=0; i< constants.game.GRID_WIDTH; ++i) {
@@ -415,7 +395,7 @@ function (constants, Player, Coin) {
             this.changeState(WAIT_RESET_STATE);
 
             this.replayButton.visible = true;
-
+            this.replayButton.bringToTop();
         },
 
         replayButtonOnClick: function () {
