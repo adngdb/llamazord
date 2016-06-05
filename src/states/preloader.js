@@ -29,6 +29,9 @@ define(function () {
 
             // Llama assets.
             this.game.load.spritesheet('llama-raw-idle', 'assets/llama/llama-raw-idle.png', 470, 470, 25);
+            this.game.load.spritesheet('llama-raw-hit', 'assets/llama/llama-raw-hit.png', 470, 470, 18);
+            this.game.load.spritesheet('llama-raw-victory', 'assets/llama/llama-raw-victory.png', 470, 470, 34);
+            this.game.load.spritesheet('llama-raw-death', 'assets/llama/llama-raw-death.png', 470, 470, 21);
 
             // coin assets
             this.game.load.image('coin_sun', 'assets/jeton-soleil.png');

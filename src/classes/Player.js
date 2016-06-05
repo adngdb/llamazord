@@ -22,6 +22,10 @@ function (constants) {
         this.game = game;
         this.playerNumber = number;
 
+        this.animNames = ['idle', 'hit', 'victory', 'death'];
+        this.anims = {};
+        this.sprites = {};
+
         this.llama = this.game.add.group();
 
         this.init();
@@ -32,14 +36,43 @@ function (constants) {
             this.health = MAX_HEALTH;
 
             var playerData = playersData[this.playerNumber];
-            var sprite = this.llama.create(playerData.x, playerData.y, playerData.sprite, 5);
-            sprite.anchor.set(0.5, 0.5);
-            var anim = sprite.animations.add('idle');
-            anim.play(24, true);
+
+            for (var i = this.animNames.length - 1; i >= 0; i--) {
+                var anim = this.animNames[i];
+                var spriteName = 'llama-raw-' + anim;
+
+                var sprite = this.llama.create(playerData.x, playerData.y, spriteName);
+                sprite.anchor.set(0.5, 0.5);
+                sprite.visible = false;
+                this.anims[anim] = sprite.animations.add(anim);
+                this.sprites[anim] = sprite;
+            }
 
             if (this.playerNumber === 1) {
-                sprite.scale.x *= -1;
+                this.llama.setAll('scale.x', -1);
             }
+
+            this.animate('idle');
+        },
+
+        stopAllAnimations: function () {
+            for (var i = this.animNames.length - 1; i >= 0; i--) {
+                var anim = this.animNames[i];
+
+                if (this.anims[anim].isPlaying) {
+                    this.anims[anim].stop(true);
+                    this.sprites[anim].visible = false;
+                }
+            }
+        },
+
+        animate: function (anim, loop) {
+            if (typeof loop === 'undefined') {
+                loop = true;
+            }
+            this.stopAllAnimations();
+            this.sprites[anim].visible = true;
+            this.anims[anim].play(24, loop);
         },
 
         hit: function(power) {
