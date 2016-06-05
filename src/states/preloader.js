@@ -87,8 +87,6 @@ define(function () {
 
             // Upgrade assets
             this.game.load.image('choice_Upgrade', 'assets/choice.png');
-            this.game.load.image('attack', 'assets/player_red.png');
-            this.game.load.image('defense', 'assets/player_green.png');
 
             this.game.load.image('craft', 'assets/player_selected.png');
             // end screen asset
