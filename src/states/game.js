@@ -312,13 +312,14 @@ function (constants, Player, Coin) {
             var upgrade = this.playerUpgrades.pop();
 
             if (upgrade) {
+                console.log(upgrade);
                 // Propose the next upgrade.
                 this.choosingUpgrade = true;
 
                 // Create a new group for this upgrade panel.
                 var upgradeGroup = this.game.add.group();
 
-                function chooseUpgrade(type, family) {
+                function chooseUpgrade(family, type) {
                     return function () {
                         this.players[this.currentPlayer].addUpdate(family, type);
                         upgradeGroup.destroy();
@@ -328,27 +329,29 @@ function (constants, Player, Coin) {
 
                 var back = this.game.make.sprite(
                     this.game.world.centerX,
-                    this.game.world.centerY,
+                    650 + 630 / 2,
                     'choice_Upgrade'
                 );
                 back.anchor.set(0.5, 0.5);
                 upgradeGroup.add(back);
 
+                var family = upgrade.replace('coin_', '');
+
                 var attackBtn = this.game.make.button(
-                    this.game.world.centerX + 45,
-                    this.game.world.centerY,
-                    'attack',
-                    chooseUpgrade(0, upgrade),
+                    this.game.world.centerX - 360 / 2,
+                    650 + 90 + 540 / 2,
+                    'llama-' + family + '-attack-idle',
+                    chooseUpgrade(upgrade, 0),
                     this
                 );
                 attackBtn.anchor.set(0.5, 0.5);
                 upgradeGroup.add(attackBtn);
 
                 var defenseBtn = this.game.make.button(
-                    this.game.world.centerX - 45,
-                    this.game.world.centerY,
-                    'defense',
-                    chooseUpgrade(1, upgrade),
+                    this.game.world.centerX + 360 / 2,
+                    650 + 90 + 540 / 2,
+                    'llama-' + family + '-defense-idle',
+                    chooseUpgrade(upgrade, 1),
                     this
                 );
                 defenseBtn.anchor.set(0.5, 0.5);
