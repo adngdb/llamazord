@@ -131,15 +131,15 @@ function (constants, Player, Coin) {
             player2.anchor.setTo(0.5, 0.5);
 
             //select player
+            this.game.load.image('craft', 'llamazord/assets/craft.png');
+            var test=this.game.add.sprite(50,450,'craft');
+            test.anchor.set(0.5, 0.5);
+           /*
             var selectPlayer = this.game.add.graphics(50, 450);
             selectPlayer.lineStyle(8, 0xffd900);
             selectPlayer.drawEllipse(100, 100, 150, 50);
 
-
-            var selectPlayer2 = this.game.add.graphics(450, 450);
-            selectPlayer2.lineStyle(8, 0xffd900);
-            selectPlayer2.drawEllipse(100, 100, 150, 50);
-
+*/
         },
 
         handlePlayerAction: function () {
@@ -255,9 +255,20 @@ function (constants, Player, Coin) {
         changePlayer: function () {
             this.currentPlayer = 1 - this.currentPlayer;
             console.log('Player now playing: ' + this.currentPlayer);
+            var selectPlayer = this.game.add.graphics(50, 450);
             if(this.currentPlayer==0){
 
-            }else{
+            selectPlayer.lineStyle(8, 0xffd900);
+            selectPlayer.drawEllipse(100, 100, 150, 50);
+
+            }
+            else{
+                selectPlayer.lineStyle(8, 0xffd900);
+                selectPlayer.drawEllipse(100, 100, 0, 0);
+              /*  selectPlayer.visible = false;
+            var selectPlayer2 = this.game.add.graphics(450, 450);
+            selectPlayer2.lineStyle(8, 0xffd900);
+            selectPlayer2.drawEllipse(100, 100, 150, 50);*/
 
             }
         },
