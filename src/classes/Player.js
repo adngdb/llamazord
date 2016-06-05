@@ -23,12 +23,16 @@ function (constants) {
         this.playerNumber = number;
 
         this.animNames = ['idle', 'hit', 'victory', 'death'];
+        this.upgradeSpriteNames = ['llama-sun','llama-lizard','llama-bird'];
         this.anims = {};
         this.sprites = {};
+        this.upgradeSprites = {};
+        this.upgradeSpriteAnim ={};
 
 		// [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
 		this.upgradeTable =[,];
         this.llama = this.game.add.group();
+
 
         this.init();
     };
@@ -50,6 +54,9 @@ function (constants) {
                 this.anims[anim] = sprite.animations.add(anim);
                 this.sprites[anim] = sprite;
             }
+
+
+
 
             if (this.playerNumber === 1) {
                 this.llama.setAll('scale.x', -1);
@@ -73,7 +80,12 @@ function (constants) {
                 if (this.anims[anim].isPlaying) {
                     this.anims[anim].stop(true);
                 }
-                this.sprites[anim].visible = false;
+                if (this.sprites[anim]) {
+                    this.sprites[anim].visible = false;
+                }
+                if (this.upgradeSprites[anim]) {
+                    this.upgradeSprites[anim].visible = false;
+                }
             }
         },
 
@@ -84,11 +96,21 @@ function (constants) {
             }
 
             this.stopAllAnimations();
-            this.sprites[anim].visible = true;
+
+            if (this.sprites[anim]) {
+                this.sprites[anim].visible = true;
+            }
             this.anims[anim].play(24, loop);
+
+            if (this.upgradeSpriteAnim[anim]) {
+                this.upgradeSprites[anim].visible = true;
+                this.upgradeSpriteAnim[anim].play(24,loop);
+            }
         },
+
         addUpdate : function(coinType, upgradeType){
             var coinValue;
+            var upgradeSpritePreName;
             switch(coinType){
                 case 'coin_sun':
                     coinValue = 0;
@@ -99,6 +121,39 @@ function (constants) {
                 case 'coin_bird':
                     coinValue = 2;
                 break;
+            }
+
+
+            if (this.upgradeTable[coinValue][upgradeType] == 0){
+
+                var playerData = playersData[this.playerNumber];
+                var upgradeSpriteName;
+                var upgradeSprite;
+                // check attack or defense
+                switch (upgradeType){
+                    case 0:
+                        upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-attack-";
+                    break;
+                    case 1:
+                        upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-defense-";
+                    break;
+                }
+                //create sprite and animations
+                for (var i = this.animNames.length - 1; i >= 0; i--) {
+                    var upAnim = this.animNames[i];
+                    upgradeSpriteName =upgradeSpritePreName + upAnim;
+                    var upgradeSprite = this.llama.create(playerData.x, playerData.y, upgradeSpriteName);
+                    upgradeSprite.anchor.set(0.5, 0.5);
+                    upgradeSprite.visible = false;
+                    this.upgradeSprites[upAnim] = upgradeSprite;
+
+                    this.upgradeSpriteAnim[upAnim] = upgradeSprite.animations.add(upAnim);
+                }
+                if (this.playerNumber === 1) {
+                    this.llama.setAll('scale.x',-1);
+                }
+
+
             }
 
             this.upgradeTable[coinValue][upgradeType]++;
