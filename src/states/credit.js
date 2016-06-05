@@ -7,18 +7,13 @@ define(function () {
     Credit.prototype = {
         create: function () {
 
-            this.credit_image=this.game.add.sprite(50,500,'craft');
+            this.credit_image=this.game.add.sprite(350,600,'credit');
             this.credit_image.anchor.set(0.5, 0.5);
-            var text="LLAMAZORD\n\n\n Adrian\nBemba\nCaroline\nCyrielle\nElsa\nRémi\nYendhi\n";
 
-            var credit_text = this.game.add.text(this.game.world.centerX, 350, text, { font: "50px Arial", fill: "White", align: "center" });
-            credit_text.anchor.setTo(0.5,0.5);
+            this.logo=this.game.add.sprite(320,100,'logo');
+            this.logo.anchor.set(0.5, 0.5);
 
-
-
-
-
-        },
+      },
         update : function(){
             if (this.game.input.activePointer.isDown)
                 {

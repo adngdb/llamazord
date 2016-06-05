@@ -19,8 +19,10 @@ define(function () {
             this.load.setPreloadSprite(this.preloadBar);
 
             // UI elements.
-            this.game.load.image('play_btn', 'assets/ui/play_btn.png');
-            this.game.load.image('credit_btn', 'assets/ui/credit_btn.png');
+            this.game.load.image('play_btn', 'assets/ui/btn_play.png');
+            this.game.load.image('credit_btn', 'assets/ui/btn_credit.png');
+            this.game.load.image('background', 'assets/ui/background.png');
+            this.game.load.image('btn_fullscreen', 'assets/ui/btn_fullscreen.png');
             // Game state stuff
             this.game.load.image('player_background', 'assets/player_background.png');
             this.game.load.image('grid', 'assets/grid.png');
@@ -92,6 +94,9 @@ define(function () {
             // end screen asset
             this.game.load.image('happy-end', 'assets/llama-happy-end.png');
             //Credit
+            this.game.load.image('credit', 'assets/Bg_menu_credit.png');
+            //Logo
+            this.game.load.image('logo', 'assets/ui/LOGO.png')
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
