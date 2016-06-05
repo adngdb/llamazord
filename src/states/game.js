@@ -92,6 +92,8 @@ function (constants, Player, Coin) {
         },
 
         create: function () {
+
+
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
             background.anchor.set(0.5, 0.5);
@@ -153,6 +155,27 @@ function (constants, Player, Coin) {
             // start audio
             this.game.sound.play('ambiance');
 
+             //creation player
+            var player1 = this.game.add.text(150, 550, "Player 1", { font: "65px Arial", fill: "White", align: "center" });
+            player1.anchor.setTo(0.5, 0.5);
+
+            var player2 = this.game.add.text(550, 550, "Player 2", { font: "65px Arial", fill: "White", align: "center" });
+            player2.anchor.setTo(0.5, 0.5);
+
+            //select player
+             this.play1=this.game.add.sprite(50,500,'craft');
+            this.play1.anchor.set(0.5, 0.5);
+            this.play2=this.game.add.sprite(470,500,'craft');
+            this.play2.anchor.set(0.5, 0.5);
+            this.play2.visible = false;
+
+
+           /*
+            var selectPlayer = this.game.add.graphics(50, 450);
+            selectPlayer.lineStyle(8, 0xffd900);
+            selectPlayer.drawEllipse(100, 100, 150, 50);
+
+*/
         },
 
         handlePlayerAction: function () {
@@ -328,6 +351,16 @@ function (constants, Player, Coin) {
         changePlayer: function () {
             this.currentPlayer = 1 - this.currentPlayer;
             console.log('Player now playing: ' + this.currentPlayer);
+
+            if(this.currentPlayer==0){
+            this.play1.visible = true;
+            this.play2.visible = false;
+            }
+            else{
+                this.play1.visible = false;
+                this.play2.visible = true;
+
+            }
         },
 
         changeState: function (state) {

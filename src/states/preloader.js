@@ -44,6 +44,7 @@ define(function () {
             this.game.load.image('attack', 'assets/player_red.png');
             this.game.load.image('defense', 'assets/player_green.png');
 
+            this.game.load.image('craft', 'assets/craft.png');
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
