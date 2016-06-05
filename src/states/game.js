@@ -110,12 +110,19 @@ function (constants, Player, Coin) {
             // set grid sprite
             this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
-                constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 1) / 2),
+                constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 2) / 2),
                 'grid'
             );
-            this.gridSprite.inputEnabled = true;
             this.gridSprite.anchor.set(0.5, 0.5);
-            this.gridSprite.events.onInputUp.add(this.onClick,this);
+
+            this.gridFront = this.game.add.sprite(
+                this.game.world.centerX,
+                constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 2) / 2),
+                'grid-front'
+            );
+            this.gridFront.inputEnabled = true;
+            this.gridFront.anchor.set(0.5, 0.5);
+            this.gridFront.events.onInputUp.add(this.onClick,this);
 
             // Create coin choice sprites.
             function setCurrentCoin(coin, x) {
@@ -128,7 +135,7 @@ function (constants, Player, Coin) {
             function createCoin(ctx, name, x) {
                 var coin = ctx.game.add.sprite(
                     x,
-                    ctx.game.world.centerY,
+                    600,
                     name
                 );
                 coin.anchor.set(0.5, 0.5);
@@ -140,9 +147,10 @@ function (constants, Player, Coin) {
             this.coinSun = createCoin(this, 'coin_sun', this.game.world.centerX);
             this.coinBird = createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
             this.coinLizard = createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
-            this.coinSelected = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_selected');
+
+            this.coinSelected = this.game.add.sprite(this.game.world.centerX, 600, 'coin_selected');
             this.coinSelected.anchor.set(0.5, 0.5);
-            this.coinOver = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_over');
+            this.coinOver = this.game.add.sprite(this.game.world.centerX, 600, 'coin_over');
             this.coinOver.anchor.set(0.5, 0.5);
 
             // create GUI
@@ -206,19 +214,11 @@ function (constants, Player, Coin) {
             player2.anchor.setTo(0.5, 0.5);
 
             //select player
-             this.play1=this.game.add.sprite(50,500,'craft');
+            this.play1 = this.game.add.sprite(50,500,'craft');
             this.play1.anchor.set(0.5, 0.5);
-            this.play2=this.game.add.sprite(470,500,'craft');
+            this.play2 = this.game.add.sprite(470,500,'craft');
             this.play2.anchor.set(0.5, 0.5);
             this.play2.visible = false;
-
-
-           /*
-            var selectPlayer = this.game.add.graphics(50, 450);
-            selectPlayer.lineStyle(8, 0xffd900);
-            selectPlayer.drawEllipse(100, 100, 150, 50);
-
-*/
         },
 
         handlePlayerAction: function () {
@@ -626,6 +626,8 @@ function (constants, Player, Coin) {
             coinTween.to({ y: ydestination }, (ydestination - coinYStart) );
             coinTween.start();
             coinTween.onComplete.add(this.onCoinTweenFinished.bind(this));
+
+            this.gridFront.bringToTop();
 
             ++this.animating;
             return coin;
