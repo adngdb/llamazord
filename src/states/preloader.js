@@ -31,6 +31,7 @@ define(function () {
             this.game.load.image('coin_selected', 'assets/jeton-clic.png');
             this.game.load.image('coin_over', 'assets/jeton-survol.png');
 
+            this.game.load.image('craft', 'assets/craft.png');
             // load audio
             this.game.load.audio('ambiance', 'assets/sfx/ambience.ogg');
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
