@@ -22,15 +22,12 @@ function (constants) {
         this.game = game;
         this.playerNumber = number;
 
-<<<<<<< Updated upstream
         this.animNames = ['idle', 'hit', 'victory', 'death'];
         this.anims = {};
         this.sprites = {};
-=======
+
 		// [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
 		this.upgradeTable =[,];
->>>>>>> Stashed changes
-
         this.llama = this.game.add.group();
 
         this.init();
@@ -75,11 +72,11 @@ function (constants) {
             if (typeof loop === 'undefined') {
                 loop = true;
             }
-<<<<<<< Updated upstream
+
             this.stopAllAnimations();
             this.sprites[anim].visible = true;
             this.anims[anim].play(24, loop);
-=======
+
 
 			for(var i = 0 ; i<3; i++){
                 this.upgradeTable[i] = [];
@@ -104,7 +101,6 @@ function (constants) {
 
             this.upgradeTable[coinValue][upgradeType]++;
             console.log('bien ajouté');
->>>>>>> Stashed changes
         },
 
         hit: function(power) {
