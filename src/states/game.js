@@ -189,10 +189,10 @@ function (constants, Player, Coin) {
             }
 
              //creation player
-            var player1 = this.game.add.text(150, 550, "Player 1", { font: "65px Arial", fill: "White", align: "center" });
+            var player1 = this.game.add.text(80, 490, "Player 1", { font: "30px Arial", fill: "White", align: "center" });
             player1.anchor.setTo(0.5, 0.5);
 
-            var player2 = this.game.add.text(550, 550, "Player 2", { font: "65px Arial", fill: "White", align: "center" });
+            var player2 = this.game.add.text(630, 490, "Player 2", { font: "30px Arial", fill: "White", align: "center" });
             player2.anchor.setTo(0.5, 0.5);
 
             //select player
