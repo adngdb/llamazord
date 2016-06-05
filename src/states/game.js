@@ -20,17 +20,44 @@ function (constants, Player, Coin) {
 
         this.currentCoin = 'coin_sun';
         this.currentPlayer = 0;
+
         this.players = [];
 
         this.gameState = PLAYER_ACTION_STATE;
         this.actionIsDone = false;
+        this.choosingUpgrade = false;
         this.roundActionsCount = 0;
         this.playerUpgrades = [];
+
         this.animating = 0;
+
+        // all coin images
+        this.coinSelected = null;
+        this.coinOver = null;
+        this.coinSun = null;
+        this.coinBird = null;
+        this.coinLizard = null;
     };
 
     Game.prototype = {
         update: function () {
+            // if (this.coinSun.input.pointerOver(this.game.mouse)) {
+            //     console.log("OVER 1");
+            //     this.coinOver.visible = true;
+            //     this.coinOver.position.x = this.coinSun.position.x;
+            // } else if (this.coinLizard.input.pointerOver(this.game.mouse)) {
+            //     console.log("OVER 2");
+            //     this.coinOver.visible = true;
+            //     this.coinOver.position.x = this.coinLizard.position.x;
+            // } else if (this.coinBird.input.pointerOver(this.game.mouse)) {
+            //     console.log("OVER 3");
+            //     this.coinOver.visible = true;
+            //     this.coinOver.position.x = this.coinBird.position.x;
+            // } else {
+            //     console.log("OVER ELSE");
+            //     this.coinOver.visible = false;
+            // }
+
             if (this.animating != 0) {
                 return;
             }
@@ -90,9 +117,10 @@ function (constants, Player, Coin) {
             this.gridSprite.events.onInputUp.add(this.onClick,this);
 
             // Create coin choice sprites.
-            function setCurrentCoin(coin) {
+            function setCurrentCoin(coin, x) {
                 return function () {
                     this.currentCoin = coin;
+                    this.coinSelected.position.x = x;
                 };
             }
 
@@ -104,14 +132,18 @@ function (constants, Player, Coin) {
                 );
                 coin.anchor.set(0.5, 0.5);
                 coin.inputEnabled = true;
-                coin.events.onInputUp.add(setCurrentCoin(name), ctx);
+                coin.events.onInputUp.add(setCurrentCoin(name, x), ctx);
+                return coin;
             }
 
-            createCoin(this, 'coin_sun', this.game.world.centerX);
-            createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
-            createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
-            var coinSelected = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_selected');
-            coinSelected.anchor.set(0.5, 0.5);
+            this.coinSun = createCoin(this, 'coin_sun', this.game.world.centerX);
+            this.coinBird = createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
+            this.coinLizard = createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
+            this.coinSelected = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_selected');
+            this.coinSelected.anchor.set(0.5, 0.5);
+            this.coinOver = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_over');
+            this.coinOver.anchor.set(0.5, 0.5);
+            this.coinOver.visible = false;
 
             // create GUI
             this.createGUI();
@@ -164,6 +196,7 @@ function (constants, Player, Coin) {
                     this.playerUpgrades.push(this.grid[matches[i][0][0]][matches[i][0][1]].value);
                 }
                 // Remove the matches.
+
                 for (var i=0; i<matches.length; ++i) {
                     for (var j=0; j<matches[i].length; ++j) {
                         var currCell = this.grid[matches[i][j][0]][matches[i][j][1]];
@@ -174,6 +207,9 @@ function (constants, Player, Coin) {
                         }
                     }
                 }
+
+                this.changeState(UPGRADE_STATE);
+
                 // Animate the falling pieces.
                 for (var i=0; i< constants.game.GRID_WIDTH; ++i) {
                     for (var j=constants.game.GRID_HEIGHT-1; j>=0; --j) {
@@ -201,10 +237,6 @@ function (constants, Player, Coin) {
                     }
                 }
 
-
-
-
-
             }
             // When the grid is stable, go to the next player and state.
             else {
@@ -217,6 +249,7 @@ function (constants, Player, Coin) {
                         // player that plays last this round will play first
                         // next round.
                         this.changeState(COMBAT_STATE);
+                        this.roundActionsCount = 0;
                     }
                     else {
                         this.changePlayer();
@@ -227,10 +260,54 @@ function (constants, Player, Coin) {
         },
 
         handleUpgrade: function () {
-            // Handle upgrades.
+            if (this.choosingUpgrade) {
+                return;
+            }
+
             var upgrade = this.playerUpgrades.pop();
+
             if (upgrade) {
                 // Propose the next upgrade.
+                this.choosingUpgrade = true;
+
+                // Create a new group for this upgrade panel.
+                var upgradeGroup = this.game.add.group();
+
+                function chooseUpgrade(type, family) {
+                    return function () {
+                        this.players[this.currentPlayer].addUpdate(family, type);
+                        upgradeGroup.destroy();
+                        this.choosingUpgrade = false;
+                    };
+                }
+
+                var back = this.game.make.sprite(
+                    this.game.world.centerX,
+                    this.game.world.centerY,
+                    'choice_Upgrade'
+                );
+                back.anchor.set(0.5, 0.5);
+                upgradeGroup.add(back);
+
+                var attackBtn = this.game.make.button(
+                    this.game.world.centerX + 45,
+                    this.game.world.centerY,
+                    'attack',
+                    chooseUpgrade(0, upgrade),
+                    this
+                );
+                attackBtn.anchor.set(0.5, 0.5);
+                upgradeGroup.add(attackBtn);
+
+                var defenseBtn = this.game.make.button(
+                    this.game.world.centerX - 45,
+                    this.game.world.centerY,
+                    'defense',
+                    chooseUpgrade(1, upgrade),
+                    this
+                );
+                defenseBtn.anchor.set(0.5, 0.5);
+                upgradeGroup.add(defenseBtn);
             }
             else {
                 // All upgrades are done, go to the next state.
@@ -248,7 +325,22 @@ function (constants, Player, Coin) {
         },
 
         handleCombat: function () {
-            this.changeState(PLAYER_ACTION_STATE);
+            for (var i=0; i<3; ++i) {
+                // player 0 attack
+                var player1Attack = 1;
+                var player2Defense = 1;
+                this.players[1].hit(player1Attack-player2Defense);
+                // player 1 attack
+                var player2Attack = 1;
+                var player1Defense = 1;
+                this.players[0].hit(player2Attack-player1Defense);
+            }
+
+            if (this.players[0].health < 0 || this.players[1].health <0) {
+                this.changeState(GAME_OVER_STATE);
+            } else {
+                this.changeState(PLAYER_ACTION_STATE);
+            }
         },
 
         handleGameOver: function () {
@@ -278,9 +370,10 @@ function (constants, Player, Coin) {
         },
 
         onClick: function() {
-            if (this.animating != 0) {
+            if (this.gameState != PLAYER_ACTION_STATE) {
                 return;
             }
+
             var xClickPos = this.input.activePointer.x;
 
             var column = this.getColumn(xClickPos);
@@ -478,7 +571,7 @@ function (constants, Player, Coin) {
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT -1;
-            while (this.grid[column][bottom].value != NO_COIN) {
+            while (bottom >=0 && this.grid[column][bottom].value != NO_COIN) {
                 --bottom;
             }
 

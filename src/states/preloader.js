@@ -18,11 +18,19 @@ define(function () {
 
             this.load.setPreloadSprite(this.preloadBar);
 
-            /** Game state stuff **/
+            // UI elements.
+            this.game.load.image('play_btn', 'assets/ui/play_btn.png');
+
+            // Game state stuff
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('arena', 'assets/arena.png');
-            this.game.load.image('llama', 'assets/llama.png');
+
+            // Llama assets.
+            this.game.load.spritesheet('llama-raw-idle', 'assets/llama/llama-raw-idle.png', 470, 470, 25);
+            this.game.load.spritesheet('llama-raw-hit', 'assets/llama/llama-raw-hit.png', 470, 470, 18);
+            this.game.load.spritesheet('llama-raw-victory', 'assets/llama/llama-raw-victory.png', 470, 470, 34);
+            this.game.load.spritesheet('llama-raw-death', 'assets/llama/llama-raw-death.png', 470, 470, 21);
 
             // coin assets
             this.game.load.image('coin_sun', 'assets/jeton-soleil.png');
@@ -30,6 +38,11 @@ define(function () {
             this.game.load.image('coin_lizard', 'assets/jeton-lezard.png');
             this.game.load.image('coin_selected', 'assets/jeton-clic.png');
             this.game.load.image('coin_over', 'assets/jeton-survol.png');
+            // Upgrade assets
+
+            this.game.load.image('choice_Upgrade', 'assets/choice.png');
+            this.game.load.image('attack', 'assets/player_red.png');
+            this.game.load.image('defense', 'assets/player_green.png');
 
             this.game.load.image('craft', 'assets/craft.png');
             // load audio
@@ -51,7 +64,7 @@ define(function () {
         },
 
         startGame: function() {
-             this.game.state.start('Game');
+             this.game.state.start('Menu');
         }
 
     };
