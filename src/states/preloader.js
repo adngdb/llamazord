@@ -25,7 +25,6 @@ define(function () {
             this.game.load.image('background', 'assets/back_green.png');
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('arena', 'assets/arena.png');
-            this.game.load.image('llama', 'assets/llama.png');
 
             // Llama assets.
             this.game.load.spritesheet('llama-raw-idle', 'assets/llama/llama-raw-idle.png', 470, 470, 25);
