@@ -22,7 +22,7 @@ function (constants) {
         this.game = game;
         this.playerNumber = number;
 
-        this.animNames = ['idle', 'hit', 'victory', 'death'];
+        this.animNames = ['idle', 'hit', 'victory', 'death', 'attack', 'spit'];
         this.upgradeSpriteNames = ['llama-sun','llama-lizard','llama-bird'];
         this.anims = {};
         this.sprites = {};
@@ -55,9 +55,6 @@ function (constants) {
                 this.sprites[anim] = sprite;
             }
 
-
-
-
             if (this.playerNumber === 1) {
                 this.llama.setAll('scale.x', -1);
             }
@@ -89,7 +86,7 @@ function (constants) {
             }
         },
 
-        animate: function (anim, loop) {
+        animate: function (anim, loop, onComplete) {
             if (typeof loop === 'undefined') {
                 loop = true;
             }
@@ -100,10 +97,13 @@ function (constants) {
                 this.sprites[anim].visible = true;
             }
             this.anims[anim].play(24, loop);
+            if (onComplete) {
+                this.anims[anim].onComplete.addOnce(onComplete);
+            }
 
             if (this.upgradeSpriteAnim[anim]) {
                 this.upgradeSprites[anim].visible = true;
-                this.upgradeSpriteAnim[anim].play(24,loop);
+                this.upgradeSpriteAnim[anim].play(24, loop);
             }
         },
 

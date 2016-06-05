@@ -9,7 +9,8 @@ function (constants, Player, Coin) {
     const PLAYER_ACTION_STATE = 'PLAYER_ACTION_STATE';
     const GRID_SOLVING_STATE = 'GRID_SOLVING_STATE';
     const UPGRADE_STATE = 'UPGRADE_STATE';
-    const COMBAT_STATE = 'COMBAT_STATE';
+    const COMBAT_RESOLVE_STATE = 'COMBAT_RESOLVE_STATE';
+    const COMBAT_ANIM_STATE = 'COMBAT_ANIM_STATE';
     const GAME_OVER_STATE = 'GAME_OVER_STATE';
     const WAIT_RESET_STATE = 'WAIT_RESET_STATE';
 
@@ -29,7 +30,9 @@ function (constants, Player, Coin) {
         this.choosingUpgrade = false;
         this.roundActionsCount = 0;
         this.playerUpgrades = [];
+        this.animsStack = [];
 
+        this.fx = {};
         this.animating = 0;
 
         // all coin images
@@ -54,8 +57,11 @@ function (constants, Player, Coin) {
                 case UPGRADE_STATE:
                     this.handleUpgrade();
                     break;
-                case COMBAT_STATE:
-                    this.handleCombat();
+                case COMBAT_RESOLVE_STATE:
+                    this.handleCombatResolution();
+                    break;
+                case COMBAT_ANIM_STATE:
+                    this.handleCombatAnimation();
                     break;
                 case GAME_OVER_STATE:
                     this.handleGameOver();
@@ -165,9 +171,25 @@ function (constants, Player, Coin) {
             this.players[0] = new Player(this.game, 0);
             this.players[1] = new Player(this.game, 1);
 
+            this.createFx('goggles');
+
             // set / reset all default value for a new game
             this.resetGame();
 
+        },
+
+        createFx: function (name) {
+            var fx = this.game.add.sprite(
+                this.game.world.centerX,
+                235,
+                'attack-' + name
+            );
+            fx.anchor.set(0.5, 0.5);
+            var anim = fx.animations.add('run');
+            this.fx[name] = {
+                anim: anim,
+                sprite: fx,
+            };
         },
 
         resetGame: function() {
@@ -271,7 +293,7 @@ function (constants, Player, Coin) {
                         // Note that we do not change the current player. The
                         // player that plays last this round will play first
                         // next round.
-                        this.changeState(COMBAT_STATE);
+                        this.changeState(COMBAT_RESOLVE_STATE);
                         this.roundActionsCount = 0;
                     }
                     else {
@@ -299,7 +321,6 @@ function (constants, Player, Coin) {
                 function chooseUpgrade(type, family) {
                     return function () {
                         this.players[this.currentPlayer].addUpdate(family, type);
-                        this.players[this.currentPlayer].animate('idle');
                         upgradeGroup.destroy();
                         this.choosingUpgrade = false;
                     };
@@ -339,7 +360,7 @@ function (constants, Player, Coin) {
                     // Note that we do not change the current player. The
                     // player that plays last this round will play first
                     // next round.
-                    this.changeState(COMBAT_STATE);
+                    this.changeState(COMBAT_RESOLVE_STATE);
                 }
                 else {
                     this.changePlayer();
@@ -348,40 +369,82 @@ function (constants, Player, Coin) {
             }
         },
 
-        handleCombat: function () {
+        handleCombatResolution: function () {
             var player0NoPower = true;
             var player1NoPower = true;
-            for (var i=0; i<3; ++i) {
+
+            for (var i = 0; i < 3; ++i) {
                 // player 0 attack
                 var player0Attack = this.players[0].upgradeTable[i][0];
                 var player1Defense = this.players[1].upgradeTable[i][1];
+
                 if (player0Attack != 0) {
-                    this.players[1].hit((player0Attack+1)/(player1Defense+1));
+                    this.players[1].hit((player0Attack + 1) / (player1Defense + 1));
                     player0NoPower = false;
-                } else
-                console.log("P1 - power 0");
+
+                    // Set the corresponding animation.
+                    this.animsStack.push(['attack', 'hit', 'goggles']);
+                }
+
                 // player 1 attack
                 var player1Attack = this.players[1].upgradeTable[i][0];
                 var player0Defense = this.players[0].upgradeTable[i][1];
                 if (player1Attack != 0) {
                     this.players[0].hit((player1Attack+1)/(player0Defense+1));
                     player1NoPower = false;
-                } else                 console.log("P2 - power 0");
+
+                    // Set the corresponding animation.
+                    this.animsStack.push(['hit', 'attack', '-goggles']);
+                }
             }
             if (player0NoPower) {
                 // Attack "jet d'eau P0"
                 this.players[1].hit(1);
+
+                // Set the corresponding animation.
+                this.animsStack.push(['spit', 'hit', 'goggles']);
             }
 
             if (player1NoPower) {
                 // Attack "jet d'eau P1"
                 this.players[0].hit(1);
+                this.animsStack.push(['hit', 'spit', '-goggles']);
             }
 
-            if (this.players[0].health < 0 || this.players[1].health <0) {
-                this.changeState(GAME_OVER_STATE);
-            } else {
-                this.changeState(PLAYER_ACTION_STATE);
+            this.changeState(COMBAT_ANIM_STATE);
+        },
+
+        handleCombatAnimation: function () {
+            if (this.animating > 0) {
+                return;
+            }
+
+            if (this.animsStack.length) {
+                // Run the next stack of animations.
+                var stack = this.animsStack.pop();
+
+                this.animating += 3;
+                this.players[0].animate(stack[0], false, this.onAnimationFinished.bind(this));
+                this.players[1].animate(stack[1], false, this.onAnimationFinished.bind(this));
+
+                var anim = stack[2];
+                if (anim.charAt(0) === '-') {
+                    anim = anim.slice(1, anim.length);
+                    this.fx[anim].sprite.scale.x = -1;
+                }
+                else {
+                    this.fx[anim].sprite.scale.x = 1;
+                }
+                this.fx[anim].anim.play(24);
+                this.fx[anim].anim.onComplete.addOnce(this.onAnimationFinished.bind(this));
+            }
+            else {
+                if (this.players[0].health < 0 || this.players[1].health < 0) {
+                    this.changeState(GAME_OVER_STATE);
+                }
+                else {
+                    this.changeState(PLAYER_ACTION_STATE);
+                }
             }
         },
 
@@ -420,6 +483,11 @@ function (constants, Player, Coin) {
         },
 
         changeState: function (state) {
+            if (state === PLAYER_ACTION_STATE) {
+                this.players[0].animate('idle');
+                this.players[1].animate('idle');
+            }
+
             var oldState = this.gameState;
             this.gameState = state;
             console.log('State: ' + oldState + ' -> ' + state);
@@ -616,6 +684,10 @@ function (constants, Player, Coin) {
 
         onCoinTweenFinished: function() {
             this.game.sound.play('hit');
+            --this.animating;
+        },
+
+        onAnimationFinished: function () {
             --this.animating;
         },
 
