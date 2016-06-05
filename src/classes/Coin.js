@@ -12,6 +12,17 @@ function (constants) {
     Coin.prototype = {
         init: function () {
         },
+
+        resetCoin:function () {
+            this.value = 'NO_COIN'
+
+            // image (Llama)
+            if (this.sprite) {
+                this.sprite.destroy();
+            }
+            this.sprite = null;
+
+        },
     };
 
     return Coin;

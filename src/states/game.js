@@ -11,6 +11,7 @@ function (constants, Player, Coin) {
     const UPGRADE_STATE = 'UPGRADE_STATE';
     const COMBAT_STATE = 'COMBAT_STATE';
     const GAME_OVER_STATE = 'GAME_OVER_STATE';
+    const WAIT_RESET_STATE = 'WAIT_RESET_STATE';
 
     const NO_COIN = 'NO_COIN';
 
@@ -143,17 +144,59 @@ function (constants, Player, Coin) {
             this.coinSelected.anchor.set(0.5, 0.5);
             this.coinOver = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'coin_over');
             this.coinOver.anchor.set(0.5, 0.5);
-            this.coinOver.visible = false;
 
             // create GUI
             this.createGUI();
+
+            //Upgrade GUI
+            this.choice_Upgrade = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'choice_Upgrade');
+            this.choice_Upgrade.anchor.set(0.5, 0.5);
+            this.attack = this.game.add.sprite(this.game.world.centerX + 45, this.game.world.centerY, 'attack');
+            this.attack.anchor.set(0.5, 0.5);
+            this.defense = this.game.add.sprite(this.game.world.centerX - 45, this.game.world.centerY, 'defense');
+            this.defense.anchor.set(0.5, 0.5);
+
+            // start audio
+            this.game.sound.play('ambiance');
+
+            // restart GUI
+            this.replayButton = this.game.add.button(
+                this.game.world.centerX,
+                this.game.world.centerY,
+                'play_btn',
+                this.replayButtonOnClick,
+                this,
+                2, 1, 0
+            );
+            this.replayButton.anchor.set(0.5, 0.5);
 
             // create players
             this.players[0] = new Player(this.game, 0);
             this.players[1] = new Player(this.game, 1);
 
-            // start audio
-            this.game.sound.play('ambiance');
+            // set / reset all default value for a new game
+            this.resetGame();
+
+        },
+
+        resetGame: function() {
+            // hide GUI buttons
+            this.replayButton.visible = false;
+            this.attack.visible = false;
+            this.choice_Upgrade.visible = false;
+            this.defense.visible = false;
+            this.coinOver.visible = false;
+
+            // reset players
+            this.players[0].defaultStatePlayer();
+            this.players[1].defaultStatePlayer();
+
+            // reset grid structure.
+            for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
+                for (var j = 0; j < constants.game.GRID_HEIGHT; ++j) {
+                    this.grid[i][j].resetCoin();
+                }
+            }
 
              //creation player
             var player1 = this.game.add.text(150, 550, "Player 1", { font: "65px Arial", fill: "White", align: "center" });
@@ -325,15 +368,33 @@ function (constants, Player, Coin) {
         },
 
         handleCombat: function () {
+            var player0NoPower = true;
+            var player1NoPower = true;
             for (var i=0; i<3; ++i) {
                 // player 0 attack
-                var player1Attack = 1;
-                var player2Defense = 1;
-                this.players[1].hit(player1Attack-player2Defense);
+                var player0Attack = this.players[0].upgradeTable[i][0];
+                var player1Defense = this.players[1].upgradeTable[i][1];
+                if (player0Attack != 0) {
+                    this.players[1].hit((player0Attack+1)/(player1Defense+1));
+                    player0NoPower = false;
+                } else
+                console.log("P1 - power 0");
                 // player 1 attack
-                var player2Attack = 1;
-                var player1Defense = 1;
-                this.players[0].hit(player2Attack-player1Defense);
+                var player1Attack = this.players[1].upgradeTable[i][0];
+                var player0Defense = this.players[0].upgradeTable[i][1];
+                if (player1Attack != 0) {
+                    this.players[0].hit((player1Attack+1)/(player0Defense+1));
+                    player1NoPower = false;
+                } else                 console.log("P2 - power 0");
+            }
+            if (player0NoPower) {
+                // Attack "jet d'eau P0"
+                this.players[1].hit(1);
+            }
+
+            if (player1NoPower) {
+                // Attack "jet d'eau P1"
+                this.players[0].hit(1);
             }
 
             if (this.players[0].health < 0 || this.players[1].health <0) {
@@ -346,6 +407,20 @@ function (constants, Player, Coin) {
         handleGameOver: function () {
             // TODO
             console.log('Game Over');
+            //
+
+            this.players[0].animate(this.players[0].health > 0 ? 'victory': 'death', this.players[0].health > 0);
+            this.players[1].animate(this.players[1].health > 0 ? 'victory': 'death', this.players[1].health > 0);
+            this.changeState(WAIT_RESET_STATE);
+
+            this.replayButton.visible = true;
+
+        },
+
+        replayButtonOnClick: function () {
+            console.log('restart game');
+            this.game.state.remove('Game');
+            this.game.state.start('Menu');
         },
 
         changePlayer: function () {
@@ -370,7 +445,7 @@ function (constants, Player, Coin) {
         },
 
         onClick: function() {
-            if (this.gameState != PLAYER_ACTION_STATE) {
+            if (this.gameState != PLAYER_ACTION_STATE || this.animating != 0) {
                 return;
             }
 

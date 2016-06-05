@@ -10,11 +10,10 @@ require([
     'states/boot',
     'states/preloader',
     'states/menu',
-    'states/game',
     'constants',
     'classes/Player',
 ],
-function (Boot, Preloader, Menu, Game, constants, Player) {
+function (Boot, Preloader, Menu, constants, Player) {
     'use strict';
 
     var game = new Phaser.Game(
@@ -31,7 +30,6 @@ function (Boot, Preloader, Menu, Game, constants, Player) {
         this.game.state.add('Boot', Boot);
         this.game.state.add('Preloader', Preloader);
         this.game.state.add('Menu', Menu);
-        this.game.state.add('Game', Game);
 
         this.game.state.start('Boot');
     }

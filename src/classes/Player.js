@@ -16,7 +16,7 @@ function (constants) {
     ];
 
     const NORMAL_HIT = 16;
-    const MAX_HEALTH = 200;
+    const MAX_HEALTH = 20;
 
     var Player = function (game, number) {
         this.game = game;
@@ -39,6 +39,7 @@ function (constants) {
 
             var playerData = playersData[this.playerNumber];
 
+            // init animation
             for (var i = this.animNames.length - 1; i >= 0; i--) {
                 var anim = this.animNames[i];
                 var spriteName = 'llama-raw-' + anim;
@@ -53,7 +54,15 @@ function (constants) {
             if (this.playerNumber === 1) {
                 this.llama.setAll('scale.x', -1);
             }
+        },
 
+        defaultStatePlayer: function() {
+            for(var i = 0 ; i<3; i++){
+                this.upgradeTable[i] = [];
+                for(var j =0 ; j<2;j++){
+                    this.upgradeTable[i][j] = 0;
+                }
+            }
             this.animate('idle');
         },
 
@@ -63,12 +72,13 @@ function (constants) {
 
                 if (this.anims[anim].isPlaying) {
                     this.anims[anim].stop(true);
-                    this.sprites[anim].visible = false;
                 }
+                this.sprites[anim].visible = false;
             }
         },
 
         animate: function (anim, loop) {
+            console.log("animate : " + anim + " " + loop);
             if (typeof loop === 'undefined') {
                 loop = true;
             }
@@ -76,14 +86,6 @@ function (constants) {
             this.stopAllAnimations();
             this.sprites[anim].visible = true;
             this.anims[anim].play(24, loop);
-
-
-			for(var i = 0 ; i<3; i++){
-                this.upgradeTable[i] = [];
-				for(var j =0 ; j<2;j++){
-					this.upgradeTable[i][j] = 0;
-				}
-			}
         },
         addUpdate : function(coinType, upgradeType){
             var coinValue;
@@ -100,11 +102,10 @@ function (constants) {
             }
 
             this.upgradeTable[coinValue][upgradeType]++;
-            console.log('bien ajouté');
+            console.log('Upgrade bien ajouté : ' + coinType + " " + upgradeType);
         },
 
         hit: function(power) {
-            console.log("BEFORE player : " + this.playerNumber + "| remaining health : " + this.health);
             if (power > 0) {
                 this.health -= NORMAL_HIT * power;
             } else if (power < 0) {

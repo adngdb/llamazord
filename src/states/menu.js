@@ -1,4 +1,8 @@
-define(function () {
+define([
+    'states/game',
+],
+
+    function (Game) {
     "use strict";
 
     var Menu = function (game) {
@@ -22,6 +26,10 @@ define(function () {
 
         onPlay: function () {
             console.log('start game');
+            // if (this.game.state.checkState('Game')) {
+            // }
+            this.game.sound.stopAll();
+            this.game.state.add('Game', Game);
             this.game.state.start('Game');
         },
     };
