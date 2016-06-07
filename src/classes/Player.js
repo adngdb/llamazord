@@ -87,7 +87,6 @@ function (constants) {
         },
 
         animate: function (anim, loop, onComplete) {
-            console.log('animate: ' + anim);
             if (typeof loop === 'undefined') {
                 loop = true;
             }
@@ -155,18 +154,16 @@ function (constants) {
             }
 
             this.upgradeTable[coinValue][upgradeType]++;
-            console.log('Upgrade bien ajouté : ' + coinType + " " + upgradeType);
         },
 
         hit: function(power) {
             if (power > 0) {
                 this.health -= NORMAL_HIT * power;
             } else if (power < 0) {
-                this.health -= NORMAL_HIT/power;
+                this.health -= NORMAL_HIT / power;
             } else {
                 this.health -= NORMAL_HIT;
             }
-            console.log("player : " + this.playerNumber + "| remaining health : " + this.health);
         }
     };
 

@@ -1,9 +1,10 @@
 define([
     'constants',
+    'utils',
     'classes/Player',
     'classes/Coin',
 ],
-function (constants, Player, Coin) {
+function (constants, utils, Player, Coin) {
     "use strict";
 
     const PLAYER_ACTION_STATE = 'PLAYER_ACTION_STATE';
@@ -48,10 +49,11 @@ function (constants, Player, Coin) {
 
     Game.prototype = {
         update: function () {
-
             if (this.animating != 0) {
                 return;
             }
+
+            // A very basic state machine.
             switch (this.gameState) {
                 case PLAYER_ACTION_STATE:
                     this.handlePlayerAction();
@@ -74,8 +76,7 @@ function (constants, Player, Coin) {
             }
         },
 
-        preload: function() {
-
+        init: function() {
             // Init grid structure.
             for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 this.grid[i] = [];
@@ -86,11 +87,9 @@ function (constants, Player, Coin) {
         },
 
         create: function () {
-
-
             // set background sprite
             var background = this.game.add.sprite(this.game.world.centerX, 560, 'player_background');
-            background.anchor.set(0.5, 0.5);
+            background.anchor.set(.5, .5);
 
             // set arena background
             var arena = this.game.add.sprite(
@@ -98,15 +97,15 @@ function (constants, Player, Coin) {
                 constants.stage.ARENA_HEIGHT / 2,
                 'arena'
             );
-            arena.anchor.set(0.5, 0.5);
+            arena.anchor.set(.5, .5);
 
-            // set grid sprite
+            // set grid sprites
             this.gridSprite = this.game.add.sprite(
                 this.game.world.centerX,
                 constants.stage.HEIGHT - (constants.stage.CELL_SIZE * (constants.game.GRID_HEIGHT + 2) / 2),
                 'grid'
             );
-            this.gridSprite.anchor.set(0.5, 0.5);
+            this.gridSprite.anchor.set(.5, .5);
 
             this.gridFront = this.game.add.sprite(
                 this.game.world.centerX,
@@ -114,87 +113,52 @@ function (constants, Player, Coin) {
                 'grid-front'
             );
             this.gridFront.inputEnabled = true;
-            this.gridFront.anchor.set(0.5, 0.5);
+            this.gridFront.anchor.set(.5, .5);
             this.gridFront.events.onInputUp.add(this.onClick,this);
 
             // Create coin choice sprites.
-            function setCurrentCoin(ctx, coin) {
-                return function () {
-                    ctx.currentCoin = coin;
-
-                    // reset coin
-                    ctx.coinSun.setFrames(1, coin=='coin_sun'? 2:0);
-                    ctx.coinBird.setFrames(1, coin=='coin_bird'? 2:0);
-                    ctx.coinLizard.setFrames(1, coin=='coin_lizard'? 2:0);
-                };
-            }
-
-            function createCoin(ctx, name, x) {
-                var coin = ctx.game.add.button(
-                    x,
-                    600,
-                    name,
-                    setCurrentCoin(ctx, name),
-                    this,
-                    1, (name=='coin_sun'? 2:0)
-                );
-                coin.anchor.set(0.5, 0.5);
-                return coin;
-            }
-
-            this.coinSun = createCoin(this, 'coin_sun', this.game.world.centerX);
-            this.coinBird = createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
-            this.coinLizard = createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
-
-            // create GUI
-            this.createGUI();
-
-            //Upgrade GUI
-            // this.choice_Upgrade = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'choice_Upgrade');
-            // this.choice_Upgrade.anchor.set(0.5, 0.5);
-            // this.attack = this.game.add.sprite(this.game.world.centerX + 45, this.game.world.centerY, 'attack');
-            // this.attack.anchor.set(0.5, 0.5);
-            // this.defense = this.game.add.sprite(this.game.world.centerX - 45, this.game.world.centerY, 'defense');
-            // this.defense.anchor.set(0.5, 0.5);
+            this.coinSun = utils.createCoin(this, 'coin_sun', this.game.world.centerX);
+            this.coinBird = utils.createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
+            this.coinLizard = utils.createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
 
             // start audio
             this.game.sound.stopAll();
-            this.game.sound.play('ambiance', 0.5, true);
+            this.game.sound.play('ambiance', .5, true);
 
             // restart GUI
             this.replayButton = this.game.add.button(
                 this.game.world.centerX,
-                470+405,
+                constants.stage.ARENA_HEIGHT + 405,
                 'happy-end',
                 this.replayButtonOnClick,
                 this,
                 2, 1, 0
             );
-            this.replayButton.anchor.set(0.5, 0.5);
+            this.replayButton.anchor.set(.5, .5);
 
             // create players
             this.players[0] = new Player(this.game, 0);
             this.players[1] = new Player(this.game, 1);
 
-            for (var i=this.animOrder.length-1; i>=0; --i) {
+            for (var i = this.animOrder.length - 1; i >= 0; --i) {
                 this.createFx(this.animOrder[i]);
             }
 
             // set / reset all default value for a new game
             this.resetGame();
-
         },
 
         createFx: function (name) {
-            console.log("create FX : " + name);
             var fx = this.game.add.sprite(
                 this.game.world.centerX,
                 235,
                 'attack-' + name
             );
-            fx.anchor.set(0.5, 0.5);
+            fx.anchor.set(.5, .5);
             fx.visible = false;
+
             var anim = fx.animations.add('run');
+
             this.fx[name] = {
                 anim: anim,
                 sprite: fx,
@@ -204,9 +168,6 @@ function (constants, Player, Coin) {
         resetGame: function() {
             // hide GUI buttons
             this.replayButton.visible = false;
-            // this.attack.visible = false;
-            // this.choice_Upgrade.visible = false;
-            // this.defense.visible = false;
 
             // reset players
             this.players[0].defaultStatePlayer();
@@ -219,18 +180,18 @@ function (constants, Player, Coin) {
                 }
             }
 
-             //creation player
+            // Player texts.
             var player1 = this.game.add.text(80, 490, "Player 1", { font: "30px Arial", fill: "White", align: "center" });
-            player1.anchor.setTo(0.5, 0.5);
+            player1.anchor.setTo(.5, .5);
 
             var player2 = this.game.add.text(630, 490, "Player 2", { font: "30px Arial", fill: "White", align: "center" });
-            player2.anchor.setTo(0.5, 0.5);
+            player2.anchor.setTo(.5, .5);
 
             //select player
-            this.play1 = this.game.add.sprite(83,620,'craft');
-            this.play1.anchor.set(0.5, 0.5);
-            this.play2 = this.game.add.sprite(635,620,'craft');
-            this.play2.anchor.set(0.5, 0.5);
+            this.play1 = this.game.add.sprite(83, 620, 'craft');
+            this.play1.anchor.set(.5, .5);
+            this.play2 = this.game.add.sprite(635, 620, 'craft');
+            this.play2.anchor.set(.5, .5);
             this.play2.visible = false;
         },
 
@@ -320,7 +281,6 @@ function (constants, Player, Coin) {
             var upgrade = this.playerUpgrades.pop();
 
             if (upgrade) {
-                console.log(upgrade);
                 // Propose the next upgrade.
                 this.choosingUpgrade = true;
 
@@ -340,7 +300,7 @@ function (constants, Player, Coin) {
                     650 + 630 / 2,
                     'choice_Upgrade'
                 );
-                back.anchor.set(0.5, 0.5);
+                back.anchor.set(.5, .5);
                 upgradeGroup.add(back);
 
                 var family = upgrade.replace('coin_', '');
@@ -352,7 +312,7 @@ function (constants, Player, Coin) {
                     chooseUpgrade(upgrade, 0),
                     this
                 );
-                attackBtn.anchor.set(0.5, 0.5);
+                attackBtn.anchor.set(.5, .5);
                 upgradeGroup.add(attackBtn);
 
                 var defenseBtn = this.game.make.button(
@@ -362,7 +322,7 @@ function (constants, Player, Coin) {
                     chooseUpgrade(upgrade, 1),
                     this
                 );
-                defenseBtn.anchor.set(0.5, 0.5);
+                defenseBtn.anchor.set(.5, .5);
                 upgradeGroup.add(defenseBtn);
             }
             else {
@@ -462,10 +422,6 @@ function (constants, Player, Coin) {
         },
 
         handleGameOver: function () {
-            // TODO
-            console.log('Game Over');
-            //
-
             this.players[0].animate(this.players[0].health > 0 ? 'victory': 'death', this.players[0].health > 0);
             this.players[1].animate(this.players[1].health > 0 ? 'victory': 'death', this.players[1].health > 0);
             this.changeState(WAIT_RESET_STATE);
@@ -475,7 +431,6 @@ function (constants, Player, Coin) {
         },
 
         replayButtonOnClick: function () {
-            console.log('restart game');
             this.game.state.remove('Game');
             this.game.state.start('Menu');
         },
@@ -545,11 +500,7 @@ function (constants, Player, Coin) {
             }
             var line = this.getLine(column);
 
-            if (line == -1) {
-                // No space in column
-                this.invalidColumn();
-            }
-            else {
+            if (line != -1) {
                 var newSprite = this.createCoin(
                     column,
                     constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE
@@ -560,9 +511,6 @@ function (constants, Player, Coin) {
                 this.actionIsDone = true;
             }
             this.game.sound.play('sliding');
-        },
-
-        createGUI: function () {
         },
 
         getAllMatches: function() {
@@ -586,12 +534,11 @@ function (constants, Player, Coin) {
                             ++tmp;
                         }
                         if (tmp >= 5) {
-                            console.log(" match diag BR: 5" );
                             // 5 coin aligned
                             matchs.push(currentMatch.slice(0,3));
                             matchs.push(currentMatch.slice(2));
-                        } else if (tmp >= 3) {
-                            console.log(" match diag BR: 3" );
+                        }
+                        else if (tmp >= 3) {
                             // 3 or 4 aligned
                             matchs.push(currentMatch);
                         }
@@ -602,13 +549,14 @@ function (constants, Player, Coin) {
                 // next diagonal
                 if (diagStartY != 0) {
                     --diagStartY;
-                } else {
+                }
+                else {
                     ++diagStartX;
                 }
             }
 
             // right
-            for (var j=0; j< constants.game.GRID_HEIGHT; ++j) {
+            for (var j = 0; j < constants.game.GRID_HEIGHT; ++j) {
                 var cptX = 0;
                 while(cptX < constants.game.GRID_WIDTH-2) {
                     var currentCell = this.grid[cptX][j];
@@ -620,12 +568,11 @@ function (constants, Player, Coin) {
                             ++tmpX;
                         }
                         if (tmpX >= 5) {
-                            console.log(" match right : 5" );
                             // 5 coin aligned
                             matchs.push(currentMatch.slice(0,3));
                             matchs.push(currentMatch.slice(2));
-                        } else if (tmpX >= 3) {
-                            console.log(" match right : 3" );
+                        }
+                        else if (tmpX >= 3) {
                             // 3 or 4 aligned
                             matchs.push(currentMatch);
                         }
@@ -652,12 +599,11 @@ function (constants, Player, Coin) {
                             ++tmp;
                         }
                         if (tmp >= 5) {
-                            console.log(" match diag UR: 5" );
                             // 5 coin aligned
                             matchs.push(currentMatch.slice(0,3));
                             matchs.push(currentMatch.slice(2));
-                        } else if (tmp >= 3) {
-                            console.log(" match diag UR: 3" );
+                        }
+                        else if (tmp >= 3) {
                             // 3 or 4 aligned
                             matchs.push(currentMatch);
                         }
@@ -668,13 +614,14 @@ function (constants, Player, Coin) {
                 // next diagonal
                 if (diagStartY != constants.game.GRID_HEIGHT-1) {
                     ++diagStartY;
-                } else {
+                }
+                else {
                     ++diagStartX;
                 }
             }
 
             // upper
-            for (var i=0; i< constants.game.GRID_WIDTH; ++i) {
+            for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
                 var cptY = constants.game.GRID_HEIGHT-1;
                 while(cptY >2) {
                     var currentCell = this.grid[i][cptY];
@@ -686,7 +633,6 @@ function (constants, Player, Coin) {
                             ++tmpY;
                         }
                         if (tmpY >= 3) {
-                            console.log(" match up: 3" );
                             // 3 or 4 aligned
                             matchs.push(currentMatch);
                         }
@@ -698,16 +644,13 @@ function (constants, Player, Coin) {
             return matchs;
         },
 
-        removeMatchs: function() {
-        },
-
         createCoin: function(column, ydestination) {
             var coinYStart = constants.stage.COIN_START_HEIGHT + constants.stage.CELL_SIZE/2;
             var coinXStart = (column + 1) * constants.stage.CELL_SIZE;
 
             var coin = this.game.add.sprite(coinXStart, coinYStart, this.currentCoin);
             //var coin = this.game.add.sprite(coinXStart, coinYStart, 'coin');
-            coin.anchor.set(0.5, 0.5);
+            coin.anchor.set(.5, .5);
             var coinTween = this.game.add.tween(coin);
 
             coinTween.to({ y: ydestination }, (ydestination - coinYStart) );
@@ -727,15 +670,13 @@ function (constants, Player, Coin) {
 
         onAnimationFinished: function () {
             --this.animating;
-            for (var i=this.animOrder.length-1; i>=0; --i) {
+
+            // Hide all FX.
+            for (var i = this.animOrder.length - 1; i >= 0; --i) {
                 if (this.fx[this.animOrder[i]].anim.isFinished) {
                     this.fx[this.animOrder[i]].sprite.visible = false;
                 }
             }
-        },
-
-        invalidColumn: function() {
-            console.log("TODO : No place in column");
         },
 
         getColumn: function(xClickPos) {
@@ -744,13 +685,12 @@ function (constants, Player, Coin) {
 
         getLine: function (column) {
             var bottom = constants.game.GRID_HEIGHT -1;
-            while (bottom >=0 && this.grid[column][bottom].value != NO_COIN) {
+            while (bottom >= 0 && this.grid[column][bottom].value != NO_COIN) {
                 --bottom;
             }
 
             return bottom;
-        }
-
+        },
     };
 
     return Game;

@@ -5,7 +5,6 @@ function (constants) {
     var Coin = function () {
         this.value = 'NO_COIN'
 
-        // image (Llama)
         this.sprite = null;
     };
 
@@ -16,7 +15,6 @@ function (constants) {
         resetCoin:function () {
             this.value = 'NO_COIN'
 
-            // image (Llama)
             if (this.sprite) {
                 this.sprite.destroy();
             }
