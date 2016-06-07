@@ -28,6 +28,8 @@ function (Boot, Preloader, Menu, Credit, constants, Player) {
     );
 
     function create() {
+        this.game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+
         this.game.state.add('Boot', Boot);
         this.game.state.add('Preloader', Preloader);
         this.game.state.add('Menu', Menu);
