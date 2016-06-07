@@ -34,6 +34,8 @@ function (constants, Player, Coin) {
         this.playerUpgrades = [];
         this.animsStack = [];
 
+        this.filter = null;
+
         this.fx = {};
         this.animating = 0;
 
@@ -495,14 +497,40 @@ function (constants, Player, Coin) {
         },
 
         changeState: function (state) {
+            var oldState = this.gameState;
+
             if (state === PLAYER_ACTION_STATE) {
-                this.players[0].animate('idle');
-                this.players[1].animate('idle');
+                this.hookEnterPlayerAction();
+            }
+            if (state === COMBAT_RESOLVE_STATE) {
+                this.hookEnterCombat();
+            }
+            if (oldState === COMBAT_ANIM_STATE) {
+                this.hookLeaveCombat();
             }
 
-            var oldState = this.gameState;
             this.gameState = state;
             console.log('State: ' + oldState + ' -> ' + state);
+        },
+
+        hookEnterPlayerAction: function () {
+            this.players[0].animate('idle');
+            this.players[1].animate('idle');
+        },
+
+        hookEnterCombat: function () {
+            this.filter = this.game.add.sprite(
+                this.game.world.centerX,
+                constants.stage.ARENA_HEIGHT + (810 / 2),
+                'filter'
+            );
+            this.filter.anchor.set(.5, .5);
+            this.filter.alpha = .5;
+        },
+
+        hookLeaveCombat: function () {
+            this.filter.destroy();
+            this.filter = null;
         },
 
         onClick: function() {

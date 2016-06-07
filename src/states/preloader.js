@@ -28,6 +28,7 @@ define(function () {
             this.game.load.image('grid', 'assets/grid.png');
             this.game.load.image('grid-front', 'assets/grid-front.png');
             this.game.load.image('arena', 'assets/arena.png');
+            this.game.load.image('filter', 'assets/filter.png');
 
             // Llama assets.
             this.game.load.spritesheet('llama-raw-attack', 'assets/llama/llama-raw-attack.png', 470, 470, 33);
