@@ -32,10 +32,10 @@ define(function () {
             // Llama assets.
             this.game.load.spritesheet('llama-raw-attack', 'assets/llama/llama-raw-attack.png', 470, 470, 33);
             this.game.load.spritesheet('llama-raw-spit', 'assets/llama/llama-raw-spit.png', 470, 470, 43);
-            this.game.load.spritesheet('llama-raw-idle', 'assets/llama/LAMA_NUDE/LAMA_NUDE_IDLE.png', 470, 470, 25);
-            this.game.load.spritesheet('llama-raw-hit', 'assets/llama/LAMA_NUDE/LAMA_NUDE_HIT.png', 470, 470, 18);
-            this.game.load.spritesheet('llama-raw-victory', 'assets/llama/LAMA_NUDE/LAMA_NUDE_VICTORY.png', 470, 470, 34);
-            this.game.load.spritesheet('llama-raw-death', 'assets/llama/LAMA_NUDE/LAMA_NUDE_DEAD.png', 470, 470, 21);
+            this.game.load.spritesheet('llama-raw-idle', 'assets/llama/llama-raw-idle.png', 470, 470, 25);
+            this.game.load.spritesheet('llama-raw-hit', 'assets/llama/llama-raw-hit.png', 470, 470, 18);
+            this.game.load.spritesheet('llama-raw-victory', 'assets/llama/llama-raw-victory.png', 470, 470, 34);
+            this.game.load.spritesheet('llama-raw-death', 'assets/llama/llama-raw-death.png', 470, 470, 21);
 
             // Llama helmet assets
             this.game.load.spritesheet('llama-sun-defense-attack', 'assets/llama/CASQUE/CASQUE_ATTACK.png', 470, 470, 33);

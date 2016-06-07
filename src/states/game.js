@@ -16,6 +16,8 @@ function (constants, Player, Coin) {
 
     const NO_COIN = 'NO_COIN';
 
+    const ACTIONS_NUMBER_PER_ROUND = 6;
+
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
         this.grid = [];
@@ -294,7 +296,7 @@ function (constants, Player, Coin) {
                     this.changeState(UPGRADE_STATE);
                 }
                 else {
-                    if (this.roundActionsCount === 5) {
+                    if (this.roundActionsCount === ACTIONS_NUMBER_PER_ROUND) {
                         // Note that we do not change the current player. The
                         // player that plays last this round will play first
                         // next round.
@@ -364,7 +366,7 @@ function (constants, Player, Coin) {
             }
             else {
                 // All upgrades are done, go to the next state.
-                if (this.roundActionsCount === 5) {
+                if (this.roundActionsCount === ACTIONS_NUMBER_PER_ROUND) {
                     // Note that we do not change the current player. The
                     // player that plays last this round will play first
                     // next round.
