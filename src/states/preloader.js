@@ -109,6 +109,7 @@ define(function () {
             this.game.load.audio('ambiance_2', 'assets/sfx/ambience_2.ogg');
             this.game.load.audio('hit', 'assets/sfx/hit.ogg');
             this.game.load.audio('sliding', 'assets/sfx/sliding.ogg');
+            this.game.load.audio('coins-break', 'assets/sfx/coins-break.ogg');
         },
 
         create: function() {

@@ -243,18 +243,18 @@ function (constants, Player, Coin) {
         },
 
         handleGridSolving: function () {
-            var matches = this.getAllMatchs();
+            var matches = this.getAllMatches();
 
             if (matches.length) {
                 // Stack player upgrades.
-                console.log("All matches");
-                for (var i=0; i<matches.length; ++i) {
+                for (var i = 0; i < matches.length; ++i) {
                     this.playerUpgrades.push(this.grid[matches[i][0][0]][matches[i][0][1]].value);
                 }
-                // Remove the matches.
 
-                for (var i=0; i<matches.length; ++i) {
-                    for (var j=0; j<matches[i].length; ++j) {
+                // Remove the matches.
+                for (var i = 0; i < matches.length; ++i) {
+                    this.game.sound.play('coins-break');
+                    for (var j = 0; j < matches[i].length; ++j) {
                         var currCell = this.grid[matches[i][j][0]][matches[i][j][1]];
                         if (currCell.value != NO_COIN) {
                             currCell.value = NO_COIN;
@@ -265,14 +265,13 @@ function (constants, Player, Coin) {
                 }
 
                 // Animate the falling pieces.
-                for (var i=0; i< constants.game.GRID_WIDTH; ++i) {
-                    for (var j=constants.game.GRID_HEIGHT-1; j>=0; --j) {
+                for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
+                    for (var j = constants.game.GRID_HEIGHT - 1; j >= 0; --j) {
                         if (this.grid[i][j].value == NO_COIN) {
                             continue;
                         }
                         var firstAvailableCell = this.getLine(i);
                         if (firstAvailableCell > j) {
-                            console.log("move from : [" + i + "," + j + "] to [" + i + "," + firstAvailableCell + "]");
                             var currTween = this.game.add.tween(this.grid[i][j].sprite);
                             var ydestination = constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - firstAvailableCell) * constants.stage.CELL_SIZE;
                             var currY = constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - j) * constants.stage.CELL_SIZE;
@@ -485,11 +484,11 @@ function (constants, Player, Coin) {
             this.currentPlayer = 1 - this.currentPlayer;
             console.log('Player now playing: ' + this.currentPlayer);
 
-            if(this.currentPlayer==0){
-            this.play1.visible = true;
-            this.play2.visible = false;
+            if (this.currentPlayer == 0) {
+                this.play1.visible = true;
+                this.play2.visible = false;
             }
-            else{
+            else {
                 this.play1.visible = false;
                 this.play2.visible = true;
 
@@ -549,9 +548,8 @@ function (constants, Player, Coin) {
             if (line == -1) {
                 // No space in column
                 this.invalidColumn();
-            } else {
-                // console.log("set coin in : " + column +" "+ line);
-                // TODO: set the "right" coin type
+            }
+            else {
                 var newSprite = this.createCoin(
                     column,
                     constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE
@@ -567,7 +565,7 @@ function (constants, Player, Coin) {
         createGUI: function () {
         },
 
-        getAllMatchs: function() {
+        getAllMatches: function() {
             var matchs = [];
             // bottom right
             var diagStartX = 0;
