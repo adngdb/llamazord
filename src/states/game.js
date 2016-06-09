@@ -191,6 +191,9 @@ function (constants, utils, Player, Coin) {
             this.coinSun = utils.createCoin(this, 'coin_sun', this.game.world.centerX);
             this.coinBird = utils.createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
             this.coinLizard = utils.createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
+
+            // Create sound muting buttons.
+            utils.createSoundBtns(this.game);
         },
 
         createFx: function (name) {

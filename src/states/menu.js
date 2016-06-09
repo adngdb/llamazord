@@ -1,7 +1,8 @@
 define([
+    'utils',
     'states/game',
 ],
-function (Game) {
+function (utils, Game) {
     "use strict";
 
     var Menu = function (game) {};
@@ -54,6 +55,9 @@ function (Game) {
                 2, 1, 0
             );
             btn_fullScreen.anchor.set(0.5, 0.5);
+
+            // Create sound muting buttons.
+            utils.createSoundBtns(this.game);
 
             this.game.sound.stopAll();
             this.game.sound.play('ambiance_2', 0.5, true);

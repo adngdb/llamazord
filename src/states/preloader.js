@@ -23,6 +23,8 @@ define(function () {
             this.game.load.image('credit_btn', 'assets/ui/btn_credit.png');
             this.game.load.image('background', 'assets/ui/background.png');
             this.game.load.image('btn_fullscreen', 'assets/ui/btn_fullscreen.png');
+            this.game.load.spritesheet('btn-sound-on', 'assets/ui/btn-sound-on.png', 56, 56, 3);
+            this.game.load.spritesheet('btn-sound-muted', 'assets/ui/btn-sound-muted.png', 56, 56, 3);
 
             // Upgrades.
             this.game.load.image('upgrade-sun-attack', 'assets/upgrades/solarcanon.png');
