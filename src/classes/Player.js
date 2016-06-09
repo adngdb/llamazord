@@ -65,9 +65,36 @@ function (constants) {
             if (this.playerNumber === 1) {
                 this.llama.setAll('scale.x', -1);
             }
+
+            // Create health bar elements.
+            var barX = this.game.world.centerX - 180;
+            if (this.playerNumber === 1) {
+                barX = this.game.world.centerX + 180;
+            }
+            var healthBarBack = this.game.add.sprite(
+                barX,
+                constants.stage.ARENA_HEIGHT + 180 / 2,
+                'health-bar-back-gray'
+            );
+            healthBarBack.anchor.set(.5, .5);
+            var healthBack = this.game.add.sprite(
+                barX,
+                constants.stage.ARENA_HEIGHT + 180 / 2,
+                'health-back-gray'
+            );
+            healthBack.anchor.set(.5, .5);
+
+            this.healthBar = this.game.add.sprite(
+                barX,
+                constants.stage.ARENA_HEIGHT + 180 / 2 + 82,
+                'health-bar'
+            );
+            this.healthBar.anchor.set(.5, 1);
+            this.healthBar.cropEnabled = true;
+            this.healthBarHeight = this.healthBar.height;
         },
 
-        defaultStatePlayer: function() {
+        defaultStatePlayer: function () {
             for(var i = 0 ; i<3; i++){
                 this.upgradeTable[i] = [];
                 for(var j =0 ; j<2;j++){
@@ -108,7 +135,7 @@ function (constants) {
             }
         },
 
-        addUpdate: function(coinType, upgradeType){
+        addUpdate: function (coinType, upgradeType){
             var coinValue;
             var upgradeSpritePreName;
             switch(coinType){
@@ -158,7 +185,7 @@ function (constants) {
             this.upgradeTable[coinValue][upgradeType]++;
         },
 
-        hit: function(power) {
+        hit: function (power) {
             if (power > 0) {
                 this.health -= NORMAL_HIT * power;
             } else if (power < 0) {
@@ -166,9 +193,27 @@ function (constants) {
             } else {
                 this.health -= NORMAL_HIT;
             }
-        }
-    };
 
+            if (this.health < 0) {
+                this.health = 0;
+            }
+
+            console.log('Player ' + this.playerNumber + '\'s health: ' + this.health);
+
+            // Update health bar.
+            var lifeRatio = this.health / MAX_HEALTH;
+            if (this.health > 0 && lifeRatio < .1) {
+                lifeRatio = .1;
+            }
+            console.log('Health ratio: ' + lifeRatio);
+            this.healthBar.crop({
+                x: 0,
+                y: Math.abs(lifeRatio * this.healthBarHeight - this.healthBarHeight),
+                width: this.healthBar.width,
+                height: this.healthBarHeight,
+            });
+        },
+    };
 
     return Player;
 });

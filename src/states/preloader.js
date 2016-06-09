@@ -23,6 +23,14 @@ define(function () {
             this.game.load.image('credit_btn', 'assets/ui/btn_credit.png');
             this.game.load.image('background', 'assets/ui/background.png');
             this.game.load.image('btn_fullscreen', 'assets/ui/btn_fullscreen.png');
+
+            // Health bars
+            this.game.load.image('health-bar', 'assets/ui/health-bars/bar.png');
+            this.game.load.image('health-bar-back-brown', 'assets/ui/health-bars/bar-back-brown.png');
+            this.game.load.image('health-bar-back-gray', 'assets/ui/health-bars/bar-back-gray.png');
+            this.game.load.image('health-back-brown', 'assets/ui/health-bars/back-brown.png');
+            this.game.load.image('health-back-gray', 'assets/ui/health-bars/back-gray.png');
+
             // Game state stuff
             this.game.load.image('player_background', 'assets/player_background.png');
             this.game.load.image('grid', 'assets/grid.png');

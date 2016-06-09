@@ -116,16 +116,21 @@ function (constants, utils, Player, Coin) {
             this.gridFront.anchor.set(.5, .5);
             this.gridFront.events.onInputUp.add(this.onClick,this);
 
-            // Create coin choice sprites.
-            this.coinSun = utils.createCoin(this, 'coin_sun', this.game.world.centerX);
-            this.coinBird = utils.createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
-            this.coinLizard = utils.createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
+            for (var i = this.animOrder.length - 1; i >= 0; --i) {
+                this.createFx(this.animOrder[i]);
+            }
+
+            this.createGUI();
+
+            // set / reset all default value for a new game
+            this.resetGame();
 
             // start audio
             this.game.sound.stopAll();
             this.game.sound.play('ambiance', .5, true);
+        },
 
-            // restart GUI
+        createGUI: function () {
             this.replayButton = this.game.add.button(
                 this.game.world.centerX,
                 constants.stage.ARENA_HEIGHT + 405,
@@ -150,6 +155,30 @@ function (constants, utils, Player, Coin) {
             );
             this.playerTurnStatus.anchor.set(.5, .5);
 
+            // Player texts.
+            var player1Text = this.game.add.text(
+                80,
+                490,
+                this.players[0].name,
+                { font: "30px " + constants.stage.FONT, fill: "#FF5B5B", align: "center" }
+            );
+            player1Text.anchor.setTo(.5, .5);
+
+            var player2Text = this.game.add.text(
+                640,
+                490,
+                this.players[1].name,
+                { font: "30px " + constants.stage.FONT, fill: "#00D0D8", align: "center" }
+            );
+            player2Text.anchor.setTo(.5, .5);
+
+            // Create current player tokens.
+            this.tokenPlayer1 = this.game.add.sprite(83, 620, 'craft');
+            this.tokenPlayer1.anchor.set(.5, .5);
+            this.tokenPlayer2 = this.game.add.sprite(635, 620, 'craft');
+            this.tokenPlayer2.anchor.set(.5, .5);
+            this.tokenPlayer2.visible = false;
+
             var chooseCoinText = this.game.add.text(
                 this.game.world.centerX,
                 constants.stage.ARENA_HEIGHT + 70,
@@ -158,12 +187,10 @@ function (constants, utils, Player, Coin) {
             );
             chooseCoinText.anchor.set(.5, .5);
 
-            for (var i = this.animOrder.length - 1; i >= 0; --i) {
-                this.createFx(this.animOrder[i]);
-            }
-
-            // set / reset all default value for a new game
-            this.resetGame();
+            // Create coin choice sprites.
+            this.coinSun = utils.createCoin(this, 'coin_sun', this.game.world.centerX);
+            this.coinBird = utils.createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
+            this.coinLizard = utils.createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
         },
 
         createFx: function (name) {
@@ -197,30 +224,6 @@ function (constants, utils, Player, Coin) {
                     this.grid[i][j].resetCoin();
                 }
             }
-
-            // Player texts.
-            var player1 = this.game.add.text(
-                80,
-                490,
-                this.players[0].name,
-                { font: "30px " + constants.stage.FONT, fill: "#FF5B5B", align: "center" }
-            );
-            player1.anchor.setTo(.5, .5);
-
-            var player2 = this.game.add.text(
-                630,
-                490,
-                this.players[1].name,
-                { font: "30px " + constants.stage.FONT, fill: "#00D0D8", align: "center" }
-            );
-            player2.anchor.setTo(.5, .5);
-
-            //select player
-            this.play1 = this.game.add.sprite(83, 620, 'craft');
-            this.play1.anchor.set(.5, .5);
-            this.play2 = this.game.add.sprite(635, 620, 'craft');
-            this.play2.anchor.set(.5, .5);
-            this.play2.visible = false;
         },
 
         handlePlayerAction: function () {
@@ -440,7 +443,7 @@ function (constants, utils, Player, Coin) {
                 this.fx[anim].anim.onComplete.addOnce(this.onAnimationFinished.bind(this));
             }
             else {
-                if (this.players[0].health < 0 || this.players[1].health < 0) {
+                if (this.players[0].health <= 0 || this.players[1].health <= 0) {
                     this.changeState(GAME_OVER_STATE);
                 }
                 else {
@@ -470,12 +473,12 @@ function (constants, utils, Player, Coin) {
             this.playerTurnStatus.text = this.players[this.currentPlayer].name + '\'s turn';
 
             if (this.currentPlayer == 0) {
-                this.play1.visible = true;
-                this.play2.visible = false;
+                this.tokenPlayer1.visible = true;
+                this.tokenPlayer2.visible = false;
             }
             else {
-                this.play1.visible = false;
-                this.play2.visible = true;
+                this.tokenPlayer1.visible = false;
+                this.tokenPlayer2.visible = true;
 
             }
         },
