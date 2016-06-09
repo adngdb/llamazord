@@ -4,9 +4,12 @@ define({
     stage: {
         WIDTH: 720,
         HEIGHT: 1280,
+        ARENA_HEIGHT: 470,
+
         CELL_SIZE: 90,
         COIN_START_HEIGHT: 650,
-        ARENA_HEIGHT: 470,
+
+        FONT: 'Verdana',
     },
 
     game: {

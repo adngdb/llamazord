@@ -22,4 +22,26 @@ define({
         coin.anchor.set(.5, .5);
         return coin;
     },
+
+    randomInt: function (max) {
+        return Math.floor(Math.random() * max % max);
+    },
+
+    getRandomNamesPair: function () {
+        var names = [
+            [ 'Red', 'Blue' ],
+            [ 'Jessie', 'James' ],
+            [ 'Stone', 'Sharden' ],
+            [ 'Starsky', 'Hutch' ],
+            [ 'Blake', 'Mortimer' ],
+            [ 'Romeo', 'Juliette' ],
+            [ 'Holmes', 'Moriarty' ],
+            [ 'Calvin', 'Hobbes' ],
+            [ 'Tom', 'Jerry' ],
+            [ 'Laurel', 'Hardy' ],
+        ];
+
+        var index = this.randomInt(names.length);
+        return names[index];
+    },
 });

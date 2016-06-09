@@ -18,9 +18,11 @@ function (constants) {
     const NORMAL_HIT = 16;
     const MAX_HEALTH = 100;
 
-    var Player = function (game, number) {
+    var Player = function (game, number, name) {
         this.game = game;
         this.playerNumber = number;
+        this.name = name;
+
         this.upgradecounter = 0;
 
         this.animNames = ['idle', 'hit', 'victory', 'death', 'attack', 'spit'];

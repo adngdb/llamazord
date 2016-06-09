@@ -137,8 +137,26 @@ function (constants, utils, Player, Coin) {
             this.replayButton.anchor.set(.5, .5);
 
             // create players
-            this.players[0] = new Player(this.game, 0);
-            this.players[1] = new Player(this.game, 1);
+            var names = utils.getRandomNamesPair();
+            this.players[0] = new Player(this.game, 0, names[0]);
+            this.players[1] = new Player(this.game, 1, names[1]);
+
+            // Create player turn status text.
+            this.playerTurnStatus = this.game.add.text(
+                this.game.world.centerX,
+                constants.stage.ARENA_HEIGHT + 30,
+                this.players[this.currentPlayer].name + '\'s turn',
+                { font: "30px " + constants.stage.FONT, fill: "White", align: "center" }
+            );
+            this.playerTurnStatus.anchor.set(.5, .5);
+
+            var chooseCoinText = this.game.add.text(
+                this.game.world.centerX,
+                constants.stage.ARENA_HEIGHT + 70,
+                'Choose a coin:',
+                { font: "24px " + constants.stage.FONT, fill: "White", align: "center" }
+            );
+            chooseCoinText.anchor.set(.5, .5);
 
             for (var i = this.animOrder.length - 1; i >= 0; --i) {
                 this.createFx(this.animOrder[i]);
@@ -181,10 +199,20 @@ function (constants, utils, Player, Coin) {
             }
 
             // Player texts.
-            var player1 = this.game.add.text(80, 490, "Player 1", { font: "30px Arial", fill: "White", align: "center" });
+            var player1 = this.game.add.text(
+                80,
+                490,
+                this.players[0].name,
+                { font: "30px " + constants.stage.FONT, fill: "#FF5B5B", align: "center" }
+            );
             player1.anchor.setTo(.5, .5);
 
-            var player2 = this.game.add.text(630, 490, "Player 2", { font: "30px Arial", fill: "White", align: "center" });
+            var player2 = this.game.add.text(
+                630,
+                490,
+                this.players[1].name,
+                { font: "30px " + constants.stage.FONT, fill: "#00D0D8", align: "center" }
+            );
             player2.anchor.setTo(.5, .5);
 
             //select player
@@ -438,6 +466,8 @@ function (constants, utils, Player, Coin) {
         changePlayer: function () {
             this.currentPlayer = 1 - this.currentPlayer;
             console.log('Player now playing: ' + this.currentPlayer);
+
+            this.playerTurnStatus.text = this.players[this.currentPlayer].name + '\'s turn';
 
             if (this.currentPlayer == 0) {
                 this.play1.visible = true;
