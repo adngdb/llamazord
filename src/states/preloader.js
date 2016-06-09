@@ -24,6 +24,14 @@ define(function () {
             this.game.load.image('background', 'assets/ui/background.png');
             this.game.load.image('btn_fullscreen', 'assets/ui/btn_fullscreen.png');
 
+            // Upgrades.
+            this.game.load.image('upgrade-sun-attack', 'assets/upgrades/solarcanon.png');
+            this.game.load.image('upgrade-sun-defense', 'assets/upgrades/helmet.png');
+            this.game.load.image('upgrade-lizard-attack', 'assets/upgrades/guettre.png');
+            this.game.load.image('upgrade-lizard-defense', 'assets/upgrades/collar.png');
+            this.game.load.image('upgrade-bird-attack', 'assets/upgrades/goggles.png');
+            this.game.load.image('upgrade-bird-defense', 'assets/upgrades/armor.png');
+
             // Health bars
             this.game.load.image('health-bar', 'assets/ui/health-bars/bar.png');
             this.game.load.image('health-bar-back-brown', 'assets/ui/health-bars/bar-back-brown.png');

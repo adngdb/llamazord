@@ -198,14 +198,11 @@ function (constants) {
                 this.health = 0;
             }
 
-            console.log('Player ' + this.playerNumber + '\'s health: ' + this.health);
-
             // Update health bar.
             var lifeRatio = this.health / MAX_HEALTH;
             if (this.health > 0 && lifeRatio < .1) {
                 lifeRatio = .1;
             }
-            console.log('Health ratio: ' + lifeRatio);
             this.healthBar.crop({
                 x: 0,
                 y: Math.abs(lifeRatio * this.healthBarHeight - this.healthBarHeight),

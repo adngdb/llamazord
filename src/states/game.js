@@ -338,8 +338,8 @@ function (constants, utils, Player, Coin) {
 
                 var attackBtn = this.game.make.button(
                     this.game.world.centerX - 360 / 2,
-                    650 + 90 + 540 / 2,
-                    'llama-' + family + '-attack-idle',
+                    constants.stage.HEIGHT - 540 / 2,
+                    'upgrade-' + family + '-attack',
                     chooseUpgrade(upgrade, 0),
                     this
                 );
@@ -349,7 +349,7 @@ function (constants, utils, Player, Coin) {
                 var defenseBtn = this.game.make.button(
                     this.game.world.centerX + 360 / 2,
                     650 + 90 + 540 / 2,
-                    'llama-' + family + '-defense-idle',
+                    'upgrade-' + family + '-defense',
                     chooseUpgrade(upgrade, 1),
                     this
                 );
