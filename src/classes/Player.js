@@ -136,12 +136,7 @@ function (constants) {
         },
 
         addUpdate: function (coinType, upgradeType) {
-            const COIN_VALUES = {
-                'coin_sun': 0,
-                'coin_lizard': 1,
-                'coin_bird': 2,
-            };
-            var coinValue = COIN_VALUES[coinType];
+            var coinValue = constants.game.COIN_VALUES.indexOf(coinType);
 
             if (this.upgradeTable[coinValue][upgradeType] == 0) {
                 var playerData = playersData[this.playerNumber];

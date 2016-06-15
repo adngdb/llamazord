@@ -14,7 +14,9 @@ define({
 
     game: {
         GRID_WIDTH: 7,
-        GRID_HEIGHT: 5
+        GRID_HEIGHT: 5,
+
+        COIN_VALUES: ['coin_sun', 'coin_lizard', 'coin_bird'],
     },
 
     player: {

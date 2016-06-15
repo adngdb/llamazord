@@ -125,9 +125,29 @@ function (constants, utils, Player, Coin) {
             // set / reset all default value for a new game
             this.resetGame();
 
+            this.start();
+        },
+
+        start: function () {
             // start audio
             this.game.sound.stopAll();
             this.game.sound.play('ambiance', .5, true);
+
+            // Create a random set of coins to populate the board.
+            var previousCoin = -1;
+            for (var i = 0; i < 7; i++) {
+                var newCoin = utils.randomInt(3);
+                while (newCoin === previousCoin) {
+                    newCoin = utils.randomInt(3);
+                }
+                previousCoin = newCoin;
+
+                var newSprite = this.createCoin(
+                    constants.game.COIN_VALUES[newCoin],
+                    i,
+                    constants.game.GRID_HEIGHT - 1
+                );
+            }
         },
 
         createGUI: function () {
@@ -538,12 +558,10 @@ function (constants, utils, Player, Coin) {
 
             if (line != -1) {
                 var newSprite = this.createCoin(
+                    this.currentCoin,
                     column,
-                    constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE
+                    line
                 );
-                // create coin
-                this.grid[column][line].sprite = newSprite;
-                this.grid[column][line].value = this.currentCoin;
                 this.actionIsDone = true;
             }
             this.game.sound.play('sliding');
@@ -680,11 +698,12 @@ function (constants, utils, Player, Coin) {
             return matchs;
         },
 
-        createCoin: function(column, ydestination) {
+        createCoin: function(coinType, column, line) {
             var coinYStart = constants.stage.COIN_START_HEIGHT + constants.stage.CELL_SIZE/2;
             var coinXStart = (column + 1) * constants.stage.CELL_SIZE;
+            var ydestination = constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE;
 
-            var coin = this.game.add.sprite(coinXStart, coinYStart, this.currentCoin);
+            var coin = this.game.add.sprite(coinXStart, coinYStart, coinType);
             //var coin = this.game.add.sprite(coinXStart, coinYStart, 'coin');
             coin.anchor.set(.5, .5);
             var coinTween = this.game.add.tween(coin);
@@ -694,6 +713,10 @@ function (constants, utils, Player, Coin) {
             coinTween.onComplete.add(this.onCoinTweenFinished.bind(this));
 
             this.gridFront.bringToTop();
+
+            // Add coin to the grid.
+            this.grid[column][line].sprite = coin;
+            this.grid[column][line].value = coinType;
 
             ++this.animating;
             return coin;
