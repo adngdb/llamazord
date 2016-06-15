@@ -51,7 +51,7 @@ function (constants) {
             // init animation
             for (var i = this.animNames.length - 1; i >= 0; i--) {
                 var anim = this.animNames[i];
-                var spriteName = 'llama-raw-' + anim;
+                var spriteName = 'llama-' + this.playerNumber + '-' + anim;
                 var sprite = this.llama.create(playerData.x, playerData.y, spriteName);
                 sprite.anchor.set(0.5, 0.5);
                 sprite.visible = false;
@@ -95,9 +95,9 @@ function (constants) {
         },
 
         defaultStatePlayer: function () {
-            for(var i = 0 ; i<3; i++){
+            for (var i = 0 ; i<3; i++) {
                 this.upgradeTable[i] = [];
-                for(var j =0 ; j<2;j++){
+                for (var j =0 ; j<2;j++) {
                     this.upgradeTable[i][j] = 0;
                 }
             }
@@ -135,37 +135,36 @@ function (constants) {
             }
         },
 
-        addUpdate: function (coinType, upgradeType){
-            var coinValue;
-            var upgradeSpritePreName;
-            switch(coinType){
-                case 'coin_sun':
-                    coinValue = 0;
-                    break;
-                case 'coin_lizard':
-                    coinValue = 1;
-                    break;
-                case 'coin_bird':
-                    coinValue = 2;
-                    break;
-            }
+        addUpdate: function (coinType, upgradeType) {
+            const COIN_VALUES = {
+                'coin_sun': 0,
+                'coin_lizard': 1,
+                'coin_bird': 2,
+            };
+            var coinValue = COIN_VALUES[coinType];
 
-            if (this.upgradeTable[coinValue][upgradeType] == 0){
-
+            if (this.upgradeTable[coinValue][upgradeType] == 0) {
                 var playerData = playersData[this.playerNumber];
+
                 // check attack or defense
-                switch (upgradeType){
-                    case 0:
-                        upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-attack-";
-                        break;
-                    case 1:
-                        upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-defense-";
-                        break;
+                var upgradeSpritePreName;
+                if (upgradeType === 0) {
+                    upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-attack-";
                 }
+                else {
+                    upgradeSpritePreName = this.upgradeSpriteNames[coinValue] + "-defense-";
+                }
+
                 //create sprite and animations
                 for (var i = this.animNames.length - 1; i >= 0; i--) {
                     var anim = this.animNames[i];
                     var upgradeSpriteName = upgradeSpritePreName + anim;
+
+                    if (coinValue === 0 && upgradeType === 1) {
+                        // If it's the helmet (sun defense), we need to set a
+                        // different sprite depending on the player.
+                        upgradeSpriteName += '-' + this.playerNumber;
+                    }
 
                     var sprite = this.llama.create(playerData.x, playerData.y, upgradeSpriteName);
                     sprite.anchor.set(0.5, 0.5);
