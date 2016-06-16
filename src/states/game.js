@@ -17,7 +17,7 @@ function (constants, utils, Player, Coin) {
 
     const NO_COIN = 'NO_COIN';
 
-    const ACTIONS_NUMBER_PER_ROUND = 6;
+    const ACTIONS_NUMBER_PER_ROUND = 2;
 
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
@@ -49,7 +49,7 @@ function (constants, utils, Player, Coin) {
 
     Game.prototype = {
         update: function () {
-            if (this.animating != 0) {
+            if (this.animating > 0) {
                 return;
             }
 
@@ -262,22 +262,24 @@ function (constants, utils, Player, Coin) {
 
             if (matches.length) {
                 // Stack player upgrades.
-                for (var i = 0; i < matches.length; ++i) {
-                    this.playerUpgrades.push(this.grid[matches[i][0][0]][matches[i][0][1]].value);
-                }
+                matches.forEach(function (items) {
+                    this.playerUpgrades.push(
+                        this.grid[ items[0][0] ][ items[0][1] ].value
+                    );
+                }.bind(this));
 
                 // Remove the matches.
-                for (var i = 0; i < matches.length; ++i) {
+                matches.forEach(function (items) {
                     this.game.sound.play('coins-break');
-                    for (var j = 0; j < matches[i].length; ++j) {
-                        var currCell = this.grid[matches[i][j][0]][matches[i][j][1]];
-                        if (currCell.value != NO_COIN) {
-                            currCell.value = NO_COIN;
-                            currCell.sprite.kill();
-                            currCell.sprite = null;
+                    items.forEach(function (cell) {
+                        var currentCell = this.grid[ cell[0] ][ cell[1] ];
+                        if (currentCell.value != NO_COIN) {
+                            currentCell.value = NO_COIN;
+                            currentCell.sprite.kill();
+                            currentCell.sprite = null;
                         }
-                    }
-                }
+                    }.bind(this));
+                }.bind(this));
 
                 // Animate the falling pieces.
                 for (var i = 0; i < constants.game.GRID_WIDTH; ++i) {
@@ -300,11 +302,9 @@ function (constants, utils, Player, Coin) {
                             // update "old" position
                             this.grid[i][j].sprite = null;
                             this.grid[i][j].value = NO_COIN;
-
                         }
                     }
                 }
-
             }
             // When the grid is stable, go to the next player and state.
             else {
@@ -409,18 +409,24 @@ function (constants, utils, Player, Coin) {
                     player0NoPower = false;
 
                     // Set the corresponding animation.
-                    this.animsStack.push(['attack', 'hit', this.animOrder[i]]);
+                    this.animsStack.push([
+                        'attack', 'hit', this.animOrder[i],
+                        0, 1250, 500
+                    ]);
                 }
 
                 // player 1 attack
                 var player1Attack = this.players[1].upgradeTable[i][0];
                 var player0Defense = this.players[0].upgradeTable[i][1];
                 if (player1Attack != 0) {
-                    this.players[0].hit((player1Attack+1)/(player0Defense+1));
+                    this.players[0].hit((player1Attack + 1) / (player0Defense + 1));
                     player1NoPower = false;
 
-                    // Set the corresponding animation.
-                    this.animsStack.push(['hit', 'attack', ('-' + this.animOrder[i])]);
+                    // Set the corresponding animations.
+                    this.animsStack.push([
+                        'hit', 'attack', '-' + this.animOrder[i],
+                        1250, 0, 500
+                    ]);
                 }
             }
             if (player0NoPower) {
@@ -428,30 +434,38 @@ function (constants, utils, Player, Coin) {
                 this.players[1].hit(1);
 
                 // Set the corresponding animation.
-                this.animsStack.push(['spit', 'hit', this.animOrder[3]]);
+                this.animsStack.push([
+                    'spit', 'hit', this.animOrder[3],
+                    0, 1000, 840
+                ]);
             }
 
             if (player1NoPower) {
                 // Attack "jet d'eau P1"
                 this.players[0].hit(1);
-                this.animsStack.push(['hit', 'spit', ('-' + this.animOrder[3])]);
+                this.animsStack.push([
+                    'hit', 'spit', '-' + this.animOrder[3],
+                    1000, 0, 840
+                ]);
             }
 
             this.changeState(COMBAT_ANIM_STATE);
         },
 
         handleCombatAnimation: function () {
-            if (this.animating > 0) {
-                return;
-            }
-
             if (this.animsStack.length) {
                 // Run the next stack of animations.
                 var stack = this.animsStack.pop();
+                var timer = this.game.time.create(true);
 
-                this.animating += 3;
-                this.players[0].animate(stack[0], false, this.onAnimationFinished.bind(this));
-                this.players[1].animate(stack[1], false, this.onAnimationFinished.bind(this));
+                function playAnimation(ctx, stack, index, callback) {
+                    return function () {
+                        ctx.players[index].animate(stack[index], false, callback);
+                    };
+                }
+
+                timer.add(stack[3] || 0, playAnimation(this, stack, 0, this.onAnimationFinished.bind(this)));
+                timer.add(stack[4] || 0, playAnimation(this, stack, 1, this.onAnimationFinished.bind(this)));
 
                 var anim = stack[2];
                 if (anim.charAt(0) === '-') {
@@ -461,9 +475,18 @@ function (constants, utils, Player, Coin) {
                 else {
                     this.fx[anim].sprite.scale.x = 1;
                 }
-                this.fx[anim].sprite.visible = true;
-                this.fx[anim].anim.play(24);
-                this.fx[anim].anim.onComplete.addOnce(this.onAnimationFinished.bind(this));
+                function playFx(ctx, anim, callback) {
+                    return function () {
+                        ctx.fx[anim].sprite.visible = true;
+                        ctx.fx[anim].sprite.bringToTop();
+                        ctx.fx[anim].anim.play(24);
+                        ctx.fx[anim].anim.onComplete.addOnce(callback);
+                    };
+                }
+                timer.add(stack[5] || 0, playFx(this, anim, this.onAnimationFinished.bind(this)));
+
+                this.animating += 3;
+                timer.start();
             }
             else {
                 if (this.players[0].health <= 0 || this.players[1].health <= 0) {
@@ -701,14 +724,14 @@ function (constants, utils, Player, Coin) {
         createCoin: function(coinType, column, line) {
             var coinYStart = constants.stage.COIN_START_HEIGHT + constants.stage.CELL_SIZE/2;
             var coinXStart = (column + 1) * constants.stage.CELL_SIZE;
-            var ydestination = constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE;
+            var yDestination = constants.stage.HEIGHT - (constants.game.GRID_HEIGHT - line) * constants.stage.CELL_SIZE;
 
             var coin = this.game.add.sprite(coinXStart, coinYStart, coinType);
             //var coin = this.game.add.sprite(coinXStart, coinYStart, 'coin');
             coin.anchor.set(.5, .5);
             var coinTween = this.game.add.tween(coin);
 
-            coinTween.to({ y: ydestination }, (ydestination - coinYStart) );
+            coinTween.to({ y: yDestination }, (yDestination - coinYStart) );
             coinTween.start();
             coinTween.onComplete.add(this.onCoinTweenFinished.bind(this));
 
