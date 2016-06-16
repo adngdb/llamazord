@@ -150,6 +150,10 @@ function (constants, utils, Player, Coin) {
             }
         },
 
+        shutdown: function () {
+            this.game.sound.stopAll();
+        },
+
         createGUI: function () {
             this.replayButton = this.game.add.button(
                 this.game.world.centerX,
