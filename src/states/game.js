@@ -508,6 +508,7 @@ function (constants, utils, Player, Coin) {
         },
 
         replayButtonOnClick: function () {
+            this.game.sound.stopAll();
             this.game.state.remove('Game');
             this.game.state.start('Menu');
         },

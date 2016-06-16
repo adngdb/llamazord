@@ -34,7 +34,7 @@ function (constants) {
         this.allSprites = {};
         this.allAnimations = {};
 
-        // [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; deffence=>1]
+        // [Sun =>0  ; Lizard =>1 ; Bird=>2][attack =>0 ; defense=>1]
         this.upgradeTable = [];
 
         this.llama = this.game.add.group();

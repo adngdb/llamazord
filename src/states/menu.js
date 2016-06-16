@@ -9,6 +9,13 @@ function (utils, Game) {
 
     Menu.prototype = {
         create: function () {
+            if (!this.ambianceSound) {
+                this.ambianceSound = this.game.sound.play('ambiance_2', 0.5, true);
+            }
+            else if (!this.ambianceSound.isPlaying) {
+                this.ambianceSound.play('', 0, 1, true);
+            }
+
             // Background.
             this.bg = this.game.add.sprite(
                 this.game.world.centerX,
@@ -58,9 +65,6 @@ function (utils, Game) {
 
             // Create sound muting buttons.
             utils.createSoundBtns(this.game);
-
-            this.game.sound.stopAll();
-            this.game.sound.play('ambiance_2', 0.5, true);
         },
 
         onPlay: function () {
