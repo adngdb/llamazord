@@ -95,7 +95,7 @@ define(function () {
             this.game.load.spritesheet('llama-lizard-defense-hit', 'assets/llama/COLLIER/COLLIER_HIT.png', 470, 470, 18);
             this.game.load.spritesheet('llama-lizard-defense-victory', 'assets/llama/COLLIER/COLLIER_VICTORY.png', 470, 470, 34);
             this.game.load.spritesheet('llama-lizard-defense-death', 'assets/llama/COLLIER/COLLIER_DEAD.png', 470, 470, 21);
-            this.game.load.spritesheet('llama-lizard-defense-spit', 'assets/llama/COLLIER/COLLIER_ATTACK_SPIT.png', 470, 470, 33);
+            this.game.load.spritesheet('llama-lizard-defense-spit', 'assets/llama/COLLIER/COLLIER_ATTACK_SPIT.png', 470, 470, 43);
 
             // Llama guettre assets
             this.game.load.spritesheet('llama-lizard-attack-attack', 'assets/llama/GUETTRE/GUETTRE_ATTACK.png', 470, 470, 33);
@@ -110,7 +110,7 @@ define(function () {
             this.game.load.spritesheet('llama-bird-defense-hit', 'assets/llama/PLASTRON/PLASTRON_HIT.png', 470, 470, 18);
             this.game.load.spritesheet('llama-bird-defense-victory', 'assets/llama/PLASTRON/PLASTRON_VICTORY.png', 470, 470, 34);
             this.game.load.spritesheet('llama-bird-defense-death', 'assets/llama/PLASTRON/PLASTRON_DEAD.png', 470, 470, 21);
-            this.game.load.spritesheet('llama-bird-defense-spit', 'assets/llama/PLASTRON/PLASTRON_ATTACK_SPIT.png', 470, 470, 33);
+            this.game.load.spritesheet('llama-bird-defense-spit', 'assets/llama/PLASTRON/PLASTRON_ATTACK_SPIT.png', 470, 470, 43);
 
             // Llama goggles assets
             this.game.load.spritesheet('llama-bird-attack-attack', 'assets/llama/LUNETTE/LUNETTE_ATTACK.png', 470, 470, 33);

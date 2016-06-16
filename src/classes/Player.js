@@ -15,7 +15,7 @@ function (constants) {
         },
     ];
 
-    const NORMAL_HIT = 16;
+    const NORMAL_HIT = 10;
     const MAX_HEALTH = 100;
 
     var Player = function (game, number, name) {

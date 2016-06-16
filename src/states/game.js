@@ -17,7 +17,7 @@ function (constants, utils, Player, Coin) {
 
     const NO_COIN = 'NO_COIN';
 
-    const ACTIONS_NUMBER_PER_ROUND = 2;
+    const ACTIONS_NUMBER_PER_ROUND = 6;
 
     var Game = function (game) {
         // grid format : [GRID_WIDTH][GRID_HEIGHT]
