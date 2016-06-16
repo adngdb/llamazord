@@ -72,7 +72,7 @@ define(function () {
             this.game.load.spritesheet('llama-sun-defense-hit-0', 'assets/llama/CASQUE_BROWN/CASQUE_HIT_BROWN.png', 470, 470, 18);
             this.game.load.spritesheet('llama-sun-defense-victory-0', 'assets/llama/CASQUE_BROWN/CASQUE_VICTORY_BROWN.png', 470, 470, 34);
             this.game.load.spritesheet('llama-sun-defense-death-0', 'assets/llama/CASQUE_BROWN/CASQUE_DEAD_BROWN.png', 470, 470, 21);
-            this.game.load.spritesheet('llama-sun-defense-spit-0', 'assets/llama/CASQUE_BROWN/CASQUE_ATTACK_BROWN.png', 470, 470, 33);
+            this.game.load.spritesheet('llama-sun-defense-spit-0', 'assets/llama/CASQUE_BROWN/CASQUE_ATTACK_SPIT_BROWN.png', 470, 470, 43);
 
             // - player 2
             this.game.load.spritesheet('llama-sun-defense-attack-1', 'assets/llama/CASQUE_GREY/CASQUE_ATTACK_GREY.png', 470, 470, 33);
@@ -80,7 +80,7 @@ define(function () {
             this.game.load.spritesheet('llama-sun-defense-hit-1', 'assets/llama/CASQUE_GREY/CASQUE_HIT_GREY.png', 470, 470, 18);
             this.game.load.spritesheet('llama-sun-defense-victory-1', 'assets/llama/CASQUE_GREY/CASQUE_VICTORY_GREY.png', 470, 470, 34);
             this.game.load.spritesheet('llama-sun-defense-death-1', 'assets/llama/CASQUE_GREY/CASQUE_DEAD_GREY.png', 470, 470, 21);
-            this.game.load.spritesheet('llama-sun-defense-spit-1', 'assets/llama/CASQUE_GREY/CASQUE_ATTACK_GREY.png', 470, 470, 33);
+            this.game.load.spritesheet('llama-sun-defense-spit-1', 'assets/llama/CASQUE_GREY/CASQUE_ATTACK_SPIT_GREY.png', 470, 470, 43);
 
             // Llama canon assets
             this.game.load.spritesheet('llama-sun-attack-attack', 'assets/llama/SOLARCANON/SOLARCANON_ATTACK.png', 470, 470, 33);
