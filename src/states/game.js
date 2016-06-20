@@ -212,9 +212,9 @@ function (constants, utils, Player, Coin) {
             chooseCoinText.anchor.set(.5, .5);
 
             // Create coin choice sprites.
-            this.coinSun = utils.createCoin(this, 'coin_sun', this.game.world.centerX);
-            this.coinBird = utils.createCoin(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
-            this.coinLizard = utils.createCoin(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
+            this.coinSun = utils.createCoinButton(this, 'coin_sun', this.game.world.centerX);
+            this.coinBird = utils.createCoinButton(this, 'coin_bird', this.game.world.centerX + constants.stage.CELL_SIZE);
+            this.coinLizard = utils.createCoinButton(this, 'coin_lizard', this.game.world.centerX - constants.stage.CELL_SIZE);
 
             // Create sound muting buttons.
             utils.createSoundBtns(this.game);
