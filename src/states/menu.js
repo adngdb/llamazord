@@ -5,15 +5,23 @@ define([
 function (utils, Game) {
     "use strict";
 
-    var Menu = function (game) {};
+   var Menu = function (game) {};
+function playLoop (){
+this.ambianceSound.play();
+};
 
     Menu.prototype = {
         create: function () {
+            this.musicLoop=null;
+
             if (!this.ambianceSound) {
-                this.ambianceSound = this.game.sound.play('ambiance_2', 0.5, true);
+                this.ambianceSound = this.game.add.audio('ambiance_2');
+                this.ambianceSound.play();
+                this.musicLoop = this.game.time.events.loop(this.ambianceSound.durationMS ,playLoop, this);
             }
             else if (!this.ambianceSound.isPlaying) {
-                this.ambianceSound.play('', 0, 1, true);
+
+                this.musicLoop = this.game.time.events.loop(this.ambianceSound.durationMS ,playLoop, this);
             }
 
             // Background.
@@ -68,6 +76,8 @@ function (utils, Game) {
         },
 
         onPlay: function () {
+            this.ambianceSound.loop = false;
+            this.game.sound.stopAll();
             this.game.state.add('Game', Game);
             this.game.state.start('Game');
         },
