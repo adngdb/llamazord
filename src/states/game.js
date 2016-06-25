@@ -4,6 +4,8 @@ define([
     'classes/Player',
     'classes/Coin',
 ],
+
+
 function (constants, utils, Player, Coin) {
     "use strict";
 
@@ -37,6 +39,9 @@ function (constants, utils, Player, Coin) {
 
         this.filter = null;
 
+        this.musicLoop=null;
+        this.backgroundMusic=null;
+
         this.fx = {};
         this.animating = 0;
 
@@ -46,7 +51,9 @@ function (constants, utils, Player, Coin) {
         this.coinLizard = null;
         this.animOrder = ['sun', 'lizard', 'bird', 'spit'];
     };
-
+function playLoop (){
+this.backgroundMusic.play();
+};
     Game.prototype = {
         update: function () {
             if (this.animating > 0) {
@@ -129,9 +136,12 @@ function (constants, utils, Player, Coin) {
         },
 
         start: function () {
-            // start audio
+           // start audio
             this.game.sound.stopAll();
-            this.game.sound.play('ambiance', .5, true);
+            this.backgroundMusic = this.game.add.audio('ambiance');
+            this.backgroundMusic.play();
+            console.log(this.backgroundMusic.durationMS);
+            this.musicLoop = this.game.time.events.loop(this.backgroundMusic.durationMS ,playLoop, this);
 
             // Create a random set of coins to populate the board.
             var previousCoin = -1;
@@ -511,7 +521,8 @@ function (constants, utils, Player, Coin) {
             this.replayButton.bringToTop();
         },
 
-        replayButtonOnClick: function () {
+       replayButtonOnClick: function () {
+            this.backgroundMusic.loop = false;
             this.game.sound.stopAll();
             this.game.state.remove('Game');
             this.game.state.start('Menu');
